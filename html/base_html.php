@@ -8,7 +8,8 @@
 
         <meta charset="UTF-8">
         <title>BLOGG</title>
-        <base href="/">
+        <base href="<?php echo DOC_ROOT ?>/">
+        <meta name="doc_root" content="<?php echo DOC_ROOT ?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <noscript>

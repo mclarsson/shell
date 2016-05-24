@@ -17,8 +17,10 @@ class Application
      */
     public static function route($uri)
     {
-        if (array_key_exists($uri, self::$routes)) {
-            self::{self::$routes[$uri]}();
+        $trimmed = substr($uri, strlen(DOC_ROOT));
+
+        if (array_key_exists($trimmed, self::$routes)) {
+            self::{self::$routes[$trimmed]}();
         } else {
             include BASE_HTML;
         }

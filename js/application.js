@@ -24,10 +24,13 @@
      * Initiates application
      */
     var init = function() {
+
         // Set default settings
         settings = {
             // Div holding page content
-            content: document.getElementById('content')
+            content: document.getElementById('content'),
+            // Document root for application
+            base: document.getElementsByName('doc_root')[0].content
         };
 
         // Initiate methods & objects
@@ -88,7 +91,7 @@
         update: function() {
             this.current = location.pathname;
             for (var i = 0; i < this.routes.length; i++) {
-                if (this.routes[i].path === this.current) {
+                if (settings.base + this.routes[i].path === this.current) {
                     this.render(this.routes[i]);
                 }
             }
@@ -108,10 +111,10 @@
                     if (href != this.current) {
                         // Check if html5 navigation is supported
                         if (history.pushState) {
-                            history.pushState(null, null, href);
+                            history.pushState(null, null, settings.base + href);
                         } else {
                             // html5 navigation is not supported
-                            location.assign(href);
+                            location.assign(settings.base + href);
                         }
 
                         this.current = href;
@@ -128,8 +131,7 @@
          * @param  {Object} route Route to be rendered
          */
         render: function(route) {
-
-            http.get(route.template)
+            http.get(settings.base + route.template)
                 .then(function(response) {
                     settings.content.innerHTML = response;
                 });
@@ -215,7 +217,7 @@
     };
 
     Application.get = function(url, parameters) {
-        return http.get(url, parameters);
+        return http.get(settings.base + url, parameters);
     };
 
     return Application;
