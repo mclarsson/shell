@@ -1,3 +1,3 @@
 # Shell
 
-A javascript application framework. Lightwheight.
+A javascript application framework.
