@@ -37,13 +37,13 @@ class Application
     private static function login()
     {
         if (empty($_POST['username']) || empty($_POST['password'])) {
-            header('Location: /login');
+            header('Location: ' . DOC_ROOT . '/login');
         } else {
             $username = $_POST['username'];
             $password = $_POST['password'];
             $user     = DB::query("SELECT * FROM users WHERE username = ?", 's', [$username])->fetch_object();
             User::login($user, $username, $password);
-            header('Location: /');
+            header('Location: ' . DOC_ROOT);
         }
     }
 
@@ -53,7 +53,7 @@ class Application
     private static function logout()
     {
         User::logout();
-        echo header('Location: /');
+        header('Location: ' . DOC_ROOT);
         exit();
     }
 }

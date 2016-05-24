@@ -27,11 +27,8 @@
     <body>
         <nav>
             <a href="/">Home</a>
-            &emsp;
             <a href="/products">Products</a>
-            &emsp;
             <a href="/about">About</a>
-            &emsp;
             <?php echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; ?>
         </nav>
 

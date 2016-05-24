@@ -15,22 +15,21 @@
     //////////////
 
     /**
-     * Default settings for application
+     * Default information and settings for  application
      * @type {Object}
      */
-    var settings = {};
+    var _this = {};
 
     /**
      * Initiates application
      */
     var init = function() {
 
-        // Set default settings
-        settings = {
+        _this = {
             // Div holding page content
-            content: document.getElementById('content'),
+            container: document.getElementById('content'),
             // Document root for application
-            base: document.getElementsByName('doc_root')[0].content
+            doc_root: document.getElementsByName('doc_root')[0].content
         };
 
         // Initiate methods & objects
@@ -43,6 +42,17 @@
     ///////////////////////////////
     // Private methods & objects //
     ///////////////////////////////
+
+    var setContent = function(html) {
+        _this.container.innerHTML = html;
+
+        // Add base to form actions
+        for (var i = 0; i < document.forms.length; i++) {
+            var action = document.forms[i].getAttribute('action');
+            action = _this.doc_root + action;
+            document.forms[i].action = action;
+        }
+    };
 
     /**
      * Handles navigation through Ajax.
@@ -89,10 +99,13 @@
          * Updates Router to current path
          */
         update: function() {
-            this.current = location.pathname;
-            for (var i = 0; i < this.routes.length; i++) {
-                if (settings.base + this.routes[i].path === this.current) {
-                    this.render(this.routes[i]);
+            var path = location.pathname.replace(_this.doc_root, '');
+            if (this.current != path) {
+                this.current = path;
+                for (var i = 0; i < this.routes.length; i++) {
+                    if (this.routes[i].path === this.current) {
+                        this.render(this.routes[i]);
+                    }
                 }
             }
         },
@@ -111,10 +124,10 @@
                     if (href != this.current) {
                         // Check if html5 navigation is supported
                         if (history.pushState) {
-                            history.pushState(null, null, settings.base + href);
+                            history.pushState(null, null, _this.doc_root + href);
                         } else {
                             // html5 navigation is not supported
-                            location.assign(settings.base + href);
+                            location.assign(_this.doc_root + href);
                         }
 
                         this.current = href;
@@ -131,9 +144,9 @@
          * @param  {Object} route Route to be rendered
          */
         render: function(route) {
-            http.get(settings.base + route.template)
+            http.get(_this.doc_root + route.template)
                 .then(function(response) {
-                    settings.content.innerHTML = response;
+                    setContent(response);
                 });
 
             if (typeof route.callback === 'function') {
@@ -217,7 +230,7 @@
     };
 
     Application.get = function(url, parameters) {
-        return http.get(settings.base + url, parameters);
+        return http.get(_this.doc_root + url, parameters);
     };
 
     return Application;
