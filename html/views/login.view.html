@@ -2,27 +2,18 @@
     Login
 </h3>
 <form action="/auth/login" method="post">
-    <table style="margin-bottom: 16px;">
+    <table>
         <tr>
-            <td>
-                <label for="username">
-                    Username
-                </label>
-            </td>
-            <td>
-                <input id="username" name="username"/>
-            </td>
+            <td><label for="username">Username:</label></td>
+            <td><input id="username" name="username"/></td>
         </tr>
         <tr>
-            <td>
-                <label for="password">
-                    Password
-                </label>
-            </td>
-            <td>
-                <input id="password" name="password"/>
-            </td>
+            <td><label for="password">Password:</label></td>
+            <td><input id="password" name="password"/></td>
+        </tr>
+        <tr>
+        	<td></td>
+        	<td><input type="submit" value="Login" style="width: 100%; padding: 2px;"></td>
         </tr>
     </table>
-    <input type="submit" value="Login">
 </form>
