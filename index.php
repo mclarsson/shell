@@ -2,6 +2,8 @@
 
 /* CONFIG */
 
+// new commment
+
 // HTML file with base resources
 define('BASE_HTML', 'html/base_html.php');
 
