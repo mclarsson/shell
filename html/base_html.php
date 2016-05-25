@@ -1,19 +1,15 @@
 <html>
     <head>
-        <?php
-            if (User::loggedIn()) {
-                ?><meta name="csrf_token" content="<?php echo $_SESSION['csrf_token']; ?>" /><?php
-            }
-        ?>
+        <base href="<?php echo DOC_ROOT ?>/">
 
         <meta charset="UTF-8">
         <title>BLOGG</title>
-        <base href="<?php echo DOC_ROOT ?>/">
         <meta name="doc_root" content="<?php echo DOC_ROOT ?>" />
+        <?php echo User::loggedIn() ? '<meta name="csrf_token" content="'. $_SESSION['csrf_token'] .'?>" />' : ''; ?>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
         <noscript>
-            <META HTTP-EQUIV="Refresh" CONTENT="0;URL=js_disabled.html">
+            <META HTTP-EQUIV="Refresh" CONTENT="0;URL=<?php echo DOC_ROOT ?>/html/errors/js_disabled.html">
         </noscript>
 
         <!-- css -->

@@ -26,13 +26,21 @@
     var init = function() {
 
         _this = {
-            // Div holding page content
+            /**
+             * Div containing page content.
+             * @type {Element}
+             */
             container: document.getElementById('content'),
-            // Document root for application
+
+            /**
+             * Root path of application (perhaps /blog/ instead of just /).
+             * @type {String}
+             */
             doc_root: document.getElementsByName('doc_root')[0].content
         };
 
         // Initiate methods & objects
+        
         Router.init();
     };
 
@@ -43,14 +51,16 @@
     // Private methods & objects //
     ///////////////////////////////
 
+    /**
+     * Sets content on page.
+     * @param {String} html html content to be displayed.
+     */
     var setContent = function(html) {
         _this.container.innerHTML = html;
 
-        // Add base to form actions
+        // Add doc_root to form actions
         for (var i = 0; i < document.forms.length; i++) {
-            var action = document.forms[i].getAttribute('action');
-            action = _this.doc_root + action;
-            document.forms[i].action = action;
+            document.forms[i].action = _this.doc_root + document.forms[i].getAttribute('action');
         }
     };
 
@@ -105,6 +115,7 @@
                 for (var i = 0; i < this.routes.length; i++) {
                     if (this.routes[i].path === this.current) {
                         this.render(this.routes[i]);
+                        break;
                     }
                 }
             }
@@ -169,11 +180,20 @@
         }
     };
 
+    /**
+     * Makes AJAX calls.
+     * @type {Object}
+     */
     var http = {
-        concatParameters: function(params) {
-            var n = Object.keys(params).length,
-                i = 1,
-                string = '?';
+        /**
+         * Concatenates parameters into url appropriate string.
+         * @param  {Object} params Object with parameters to be encoded.
+         * @return {String}        Paramaters in string form.
+         */
+        encodeParams: function(params) {
+            var n = Object.keys(params).length;
+            var i = 1;
+            var string = '?';
 
             for (var param in params) {
                 if (params.hasOwnProperty(param)) {
@@ -187,16 +207,27 @@
 
             return string;
         },
+
+        /**
+         * Performs GET request on provided url.
+         * @param  {String} url        URL to be called.
+         * @param  {Object} parameters Parameters to send along with url.
+         * @return {http}              Self.
+         */
         get: function(url, parameters) {
             if (parameters) {
-                url += this.concatParameters(parameters);
+                url += this.encodeParams(parameters);
             }
-
             this.xhr = new XMLHttpRequest();
-            this.xhr.open('GET', url, true);
+            this.xhr.open('GET', encodeURI(url), true);
             this.xhr.send();
             return this;
         },
+
+        /**
+         * Provides callback for requests.
+         * @param  {Function} callback Callback for request.
+         */
         then: function(callback) {
             this.xhr.onload = function() {
                 callback(this.response);
@@ -229,6 +260,12 @@
         return this;
     };
 
+    /**
+     * Makes get request.
+     * @param  {String} url        URL to be called.
+     * @param  {Object} parameters Parameters to send along with url.
+     * @return {http}              Enables callbacks and chaining.
+     */
     Application.get = function(url, parameters) {
         return http.get(_this.doc_root + url, parameters);
     };
