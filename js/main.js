@@ -3,18 +3,19 @@ function log(s) {
 }
 
 (function() {
-    Application
-        .when('/', '/html/views/home.view.html', function() {
-            Application
-                .get('/api', {
+    shll.when('/', '/html/views/home.view.html', function() {
+            shll.get('/api', {
                     test: 'working',
-                    other: 'paramm'
+                    other: 'param'
                 })
                 .then(function(response) {
-                    log(response);
+                    //log(response);
                 });
         })
-        .when('/products', '/html/views/products.view.html')
+        .when('/products', '/html/views/products.view.html', null, true)
+        .when('/products/?name', '/html/views/products.view.html', function(params){
+            document.getElementById('product').innerHTML = params.name;
+        })
         .when('/about', '/html/views/about.view.html')
         .when('/login', '/html/views/login.view.html');
 })();

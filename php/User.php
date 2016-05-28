@@ -120,7 +120,7 @@ class User
     }
 
     /**
-     * Determine if user i logged in
+     * Determine if user is logged in
      * @return boolean current user session is set
      */
     public static function loggedIn()
