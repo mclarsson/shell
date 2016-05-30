@@ -15,16 +15,16 @@
     //////////////
 
     /**
-     * Default information and settings for  application
+     * Default information and settings
      * @type {Object}
      */
-    var _this = {};
+    var application = {};
 
     /**
      * Initiates application
      */
     var init = function() {
-        _this = {
+        application = {
             /**
              * Div containing page content.
              * @type {Element}
@@ -70,7 +70,7 @@
      * Display content on screen.
      * @type {Object}
      */
-    var HTML = {
+    var html = {
         /**
          * Current template being displayed.
          * @type {String}
@@ -81,39 +81,39 @@
          * Render template if it's not the current.
          * @param  {String} file path to template to be rendered.
          * @param  {Boolean} force load new template despite it being current.
-         * @return {HTTP}        Enables more callbacks to be added.
+         * @return {http}        Enables more callbacks to be added.
          */
         render: function(file, force) {
-            var http = new HTTP();
+            var xhr = new http();
             // Don't render same template again
             if (this.current === file && !force) {
                 // Still fire off callbacks
-                http.unload();
+                xhr.unload();
             } else {
                 var self = this;
-                http.get(_this.doc_root + file)
+                xhr.get(application.doc_root + file)
                     .then(function(response) {
                         self.current = file;
-                        self.setContent(response);
+                        self.set(response);
                     });
             }
-            return http;
+            return xhr;
         },
 
         /**
          * Sets content on page.
          * @param {String} html html content to be displayed.
          */
-        setContent: function(html) {
-            _this.container.innerHTML = html;
+        set: function(html) {
+            application.container.innerHTML = html;
 
             // Add doc_root to form actions
             var i = document.forms.length;
             while (i--) {
-                document.forms[i].action = _this.doc_root + document.forms[i].getAttribute('action');
+                document.forms[i].action = application.doc_root + document.forms[i].getAttribute('action');
             }
 
-            Router.addEventListeners();
+            Router.listen();
         }
     }
 
@@ -148,7 +148,7 @@
 
             // Handle back and forward button presses
             var self = this;
-            window.addEventListener('popstate', function(e) {
+            listen(window, 'popstate', function(e) {
                 self.update();
             });
         },
@@ -157,7 +157,7 @@
          * Updates Router to current path
          */
         update: function() {
-            var path = document.location.pathname.replace(_this.doc_root, '');
+            var path = document.location.pathname.replace(application.doc_root, '');
             if (this.current != path) {
                 this.current = path;
                 var route = this.match(path);
@@ -170,21 +170,19 @@
         /**
          * Adds event listeners to link, enables navigation.
          */
-        addEventListeners: function() {
+        listen: function() {
             var self = this;
             var i = document.links.length;
             while (i--) {
                 var route = this.match(document.links[i].getAttribute('href'));
                 var listens = this.listensTo(document.links[i]);
+                // Only add listeners to registered route and unregistered link
                 if (route && !listens) {
                     listen(document.links[i], 'click', function(e) {
-                        // Check if links href is registered
                         if (self.process(this)) {
                             // Prevent page from reloading
                             e.preventDefault();
                         }
-                        e.preventDefault();
-                        return false;
                     });
                     // Register link
                     this.links.push(document.links[i]);
@@ -217,15 +215,16 @@
         process: function(link) {
             var href = link.getAttribute('href');
             var route = this.match(href);
+
             if (route) {
                 // Don't reload same page
                 if (href != this.current) {
                     // Check if html5 navigation is supported
                     if (history.pushState) {
-                        history.pushState(null, null, _this.doc_root + href);
+                        history.pushState(null, null, application.doc_root + href);
                     } else {
                         // html5 navigation is not supported
-                        location.assign(_this.doc_root + href);
+                        location.assign(application.doc_root + href);
                     }
 
                     this.current = href;
@@ -273,7 +272,7 @@
          * @param  {Object} route Route to be rendered
          */
         render: function(route) {
-            HTML.render(route.template, route.force)
+            html.render(route.template, route.force)
                 .then(function() {
                     if (typeof route.callback === 'function') {
                         route.callback(route.params);
@@ -302,7 +301,7 @@
      * Makes AJAX calls.
      * @type {Object}
      */
-    function HTTP() {
+    function http() {
         return {
             /**
              * Keep track of callbacks.
@@ -373,6 +372,7 @@
                     for (var i in self.callbacks) {
                         self.callbacks[i](args);
                     }
+                    this.callbacks = [];
                 }, 0);
             }
         };
@@ -408,12 +408,12 @@
      * Makes get request.
      * @param  {String} url        URL to be called.
      * @param  {Object} parameters Parameters to send along with url.
-     * @return {HTTP}              Enables callbacks and chaining.
+     * @return {http}              Enables callbacks and chaining.
      */
     shll.get = function(url, parameters) {
-        var http = new HTTP();
-        http.get(_this.doc_root + url, parameters);
-        return http;
+        var xhr = new http();
+        xhr.get(application.doc_root + url, parameters);
+        return xhr;
     };
 
     return shll;
