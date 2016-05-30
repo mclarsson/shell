@@ -241,20 +241,22 @@
          * @return {Object}      Registered route with parameters
          */
         match: function(path) {
-            var link = path.split('/');
+            var match = path.split('/');
             var i = this.routes.length;
             routes:
                 while (i--) {
                     var route = this.routes[i].path.split('/');
-                    if (route.length === link.length) {
+                    if (route.length === match.length) {
+
                         var params = {},
                             object = {},
                             j = route.length;
+
                         while (j--) {
                             if (route[j].charAt(0) === '?') {
                                 var name = route[j].substring(1);
-                                params[name] = link[j];
-                            } else if (route[j] != link[j]) {
+                                params[name] = match[j];
+                            } else if (route[j] != match[j]) {
                                 continue routes;
                             }
                         }
@@ -386,7 +388,11 @@
      * Object holding the API.
      * @type {Object}
      */
-    var shll = {};
+    var shll = {
+        router: Router,
+        http: http,
+        html: html
+    };
 
     /**
      * Register a path with html and callback to be rendered when path is visited.
@@ -397,10 +403,7 @@
      * @return {shll}              Return self for linking
      */
     shll.when = function(path, template, callback, force) {
-        var fn = typeof callback === 'function' ? function(params) {
-            callback(params);
-        } : null;
-        Router.add(path, template, fn, force);
+        Router.add(path, template, callback, force);
         return this;
     };
 
