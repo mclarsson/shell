@@ -7,7 +7,7 @@
         root.shll = factory(root);
     }
 })(typeof global !== 'undefined' ? global : this.window || this.global, function(root) {
-    
+
     'use strict';
 
     //////////////
@@ -425,7 +425,6 @@
             router.listen();
             return this;
         },
-
         
         /**
          * Creates DOM element and returns tools for altering.
@@ -463,5 +462,6 @@
             return object;
         }
     };
+    
     return shll;
 });
