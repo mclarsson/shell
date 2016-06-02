@@ -7,36 +7,36 @@
         root.shll = factory(root);
     }
 })(typeof global !== 'undefined' ? global : this.window || this.global, function(root) {
-
+    
     'use strict';
 
     //////////////
     // Settings //
     //////////////
-
+    
     /**
      * Default information and settings
      * @type {Object}
      */
-    var application = {};
-
+    var application = {}; 
+    
     /**
      * Initiates application
      */
     function init() {
-        application = {
+        application = { 
             /**
              * Div containing page content.
              * @type {Element}
              */
             container: document.getElementById('content'),
-
+            
             /**
              * Root path of application (perhaps /blog/ instead of just /).
              * @type {String}
              */
             doc_root: document.getElementsByName('doc_root')[0].content,
-
+            
             /**
              * Character to denote paramater in path
              * @type {String}
@@ -53,7 +53,7 @@
     ///////////////////////////////
     // Private methods & objects //
     ///////////////////////////////
-
+    
     /**
      * Adds event listener to element.
      * @param  {Element}  el Element to add to.
@@ -71,7 +71,7 @@
             el.addEventListener(ev, fn, false);
         }
     };
-
+    
     /**
      * Display content on screen.
      * @type {Object}
@@ -84,6 +84,7 @@
         var current = '';
 
         return {
+            
             /**
              * Render template if it's not the current.
              * @param  {String} file path to template to be rendered.
@@ -98,49 +99,47 @@
                     xhr.unload();
                 } else {
                     var self = this;
-                    xhr.get(application.doc_root + file)
-                        .then(function(response) {
-                            current = file;
-                            self.set(response);
-                        });
+                    xhr.get(application.doc_root + file).then(function(response) {
+                        current = file;
+                        self.set(response);
+                    });
                 }
                 return xhr;
             },
-
+            
             /**
              * Sets content on page.
              * @param {String} html html content to be displayed.
              */
             set: function(html) {
                 application.container.innerHTML = html;
-
                 // Add doc_root to form actions
                 for (var i = 0, len = document.forms.length; i < len; i++) {
                     document.forms[i].action = application.doc_root + document.forms[i].getAttribute('action');
                 }
-
                 router.listen();
             }
         }
     })();
-
+    
     /**
      * Handles navigation through Ajax.
      * @type {Object}
      */
     var router = (function() {
+        
         /**
          * Holder for registered routes.
          * @type {Array}
          */
         var routes = [];
-
+        
         /**
          * Links that are currently being listened to.
          * @type {Array}
          */
         var links = [];
-
+        
         /**
          * Current uri
          * @type {String}
@@ -153,14 +152,13 @@
              */
             init: function() {
                 this.update();
-
                 // Handle back and forward button presses
                 var self = this;
                 listen(window, 'popstate', function(e) {
                     self.update();
                 });
             },
-
+            
             /**
              * Updates router to current path
              */
@@ -174,7 +172,7 @@
                     }
                 }
             },
-
+            
             /**
              * Adds event listeners to links which match with registered routes.
              */
@@ -183,27 +181,23 @@
                     href = '',
                     route = {},
                     listens = false;
-
                 for (var i = 0, len = document.links.length; i < len; i++) {
                     href = document.links[i].getAttribute('href');
                     route = this.match(href);
                     listens = this.listensTo(document.links[i]);
-
                     if (route && !listens) {
-
                         listen(document.links[i], 'click', function(e) {
                             if (self.process(this)) {
                                 // Prevent page from reloading
                                 e.preventDefault();
                             }
                         });
-
                         // Register link
                         links.push(document.links[i]);
                     }
                 }
             },
-
+            
             /**
              * Determiness if a link is already being listened to.
              * @param  {Element} link Link to be checked.
@@ -217,7 +211,7 @@
                 }
                 return false;
             },
-
+            
             /**
              * Navigates to and renders link if it's registered.
              * @param  {Element} link Clicked link
@@ -226,7 +220,6 @@
             process: function(link) {
                 var href = link.getAttribute('href'),
                     route = this.match(href);
-
                 if (route) {
                     // Don't reload same route
                     if (href !== current) {
@@ -236,7 +229,6 @@
                         } else {
                             location.assign(application.doc_root + href);
                         }
-
                         current = href;
                         this.render(route);
                     }
@@ -244,7 +236,7 @@
                 }
                 return false;
             },
-
+            
             /**
              * Checks if uri matches with any registered routes and returns match if found or false otherwise.
              * @param  {String} uri URI to compare with routes.
@@ -254,48 +246,42 @@
                 var path = uri.split('/'),
                     len = routes.length,
                     i;
-
-                loop:
-                    for (i = 0; i < len; i++) {
-                        var route = routes[i].path.split('/');
-
-                        // Same number of parts
-                        if (route.length === path.length) {
-                            var params = {},
-                                n = route.length,
-                                part;
-
-                            for (part = 0; part < n; part++) {
-                                // Check if part is parameter
-                                if (route[part].charAt(0) === application.uri_param_indicator) {
-                                    params[route[part].substring(1)] = path[part];
-                                } else if (route[part] !== path[part]) {
-                                    // Doesn't match
-                                    continue loop;
-                                }
+                loop: for (i = 0; i < len; i++) {
+                    var route = routes[i].path.split('/');
+                    // Same number of parts
+                    if (route.length === path.length) {
+                        var params = {},
+                            n = route.length,
+                            part;
+                        for (part = 0; part < n; part++) {
+                            // Check if part is parameter
+                            if (route[part].charAt(0) === application.uri_param_indicator) {
+                                params[route[part].substring(1)] = path[part];
+                            } else if (route[part] !== path[part]) {
+                                // Doesn't match
+                                continue loop;
                             }
-
-                            var match = routes[i];
-                            match.params = params;
-                            return match;
                         }
+                        var match = routes[i];
+                        match.params = params;
+                        return match;
                     }
+                }
                 return false;
             },
-
+            
             /**
              * Handles rendering of route.
              * @param  {Object} route Route to be rendered.
              */
             render: function(route) {
-                html.render(route.template, route.force)
-                    .then(function() {
-                        if (typeof route.callback === 'function') {
-                            route.callback.call(shll, route.params);
-                        }
-                    });
+                html.render(route.template, route.force).then(function() {
+                    if (typeof route.callback === 'function') {
+                        route.callback.call(shll, route.params);
+                    }
+                });
             },
-
+            
             /**
              * Registers new route.
              * @param {String}   path     URI to watch for.
@@ -313,7 +299,7 @@
             }
         }
     })();
-
+    
     /**
      * Makes AJAX calls.
      * @type {Object}
@@ -324,13 +310,13 @@
          * @type {Array}
          */
         var callbacks = [];
-
+        
         /**
          * Private XMLHttpRequest
          * @type {XMLHttpRequest}
          */
         var xhr;
-
+        
         return {
             /**
              * Concatenates parameters into url appropriate string.
@@ -351,10 +337,9 @@
                         i++;
                     }
                 }
-
                 return string;
             },
-
+            
             /**
              * Performs GET request on provided url.
              * @param  {String} url        URL to be called.
@@ -369,14 +354,13 @@
                 xhr = new XMLHttpRequest();
                 xhr.open('GET', encodeURI(url), true);
                 xhr.send();
-
                 xhr.onload = function() {
                     self.unload(this.response);
                 };
                 callbacks = [];
                 return this;
             },
-
+            
             /**
              * Adds function to list of callbacks fired off when request finished.
              * @param  {Function} callback Callback for request.
@@ -385,7 +369,7 @@
                 callbacks.push(callback);
                 return this;
             },
-
+            
             /**
              * Fires of all callbacks and resets callback Array.
              */
@@ -397,6 +381,7 @@
                         callbacks[i].call(shll, args);
                     }
                     callbacks = [];
+                    shll.digest();
                 }, 0);
             }
         };
@@ -405,8 +390,8 @@
     /////////
     // API //
     /////////
-
-    var shll = {
+    
+    var shll = {  
         /**
          * Register a path with html and callback to be rendered when visited.
          * @param  {String}   path     Path to watch for
@@ -419,7 +404,7 @@
             router.add(path, template, callback, force);
             return this;
         },
-
+        
         /**
          * Makes get request.
          * @param  {String} url        URL to be called.
@@ -431,11 +416,52 @@
             xhr.get(application.doc_root + url, parameters);
             return xhr;
         },
-
-        listen: function() {
+        
+        /**
+         * Updates application.
+         * @return {shll} Enables callbacks and linking.
+         */
+        digest: function() {
             router.listen();
+            return this;
+        },
+
+        
+        /**
+         * Creates DOM element and returns tools for altering.
+         * @param  {String} type Type of element.
+         * @return {Object}      Methods for altering element.
+         */
+        create: function(type) {
+            var element = document.createElement(type),
+                object = {
+                    
+                    /**
+                     * Adds child node to element.
+                     * @param  {String}   type     Type of child node.
+                     * @param  {Function} callback Fires if set.
+                     * @return {Object}            Returns self for linking.
+                     */
+                    insert: function(type, callback) {
+                        var child = document.createElement(type);
+                        element.appendChild(child);
+                        if (typeof callback === 'function') {
+                            callback.call(child);
+                        }
+                        return this;
+                    },
+                    
+                    /**
+                     * Appends this element to another.
+                     * @param  {Element} node Parent node.
+                     */
+                    appendTo: function(node) {
+                        node.appendChild(element);
+                    }
+                };
+
+            return object;
         }
     };
-
     return shll;
 });

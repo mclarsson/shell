@@ -6,33 +6,25 @@ function log(s) {
     shll.when('/', '/html/views/home.view.html')
         .when('/posts', '/html/views/posts.view.html', function() {
             var from = 0,
-                to = 30;
+                to = 32;
 
-            this.get('/api/get', {
+            shll.get('/api/get', {
                     from: from,
                     to: to
                 })
                 .then(function(response) {
-                    var content = JSON.parse(response);
-                    var ul = document.querySelector('#posts');
-                    var frag = document.createDocumentFragment();
-                    var len = content.length;
-
-                    var types = 'li > a';
+                    var content = JSON.parse(response),
+                        ul = document.getElementById('posts'),
+                        len = content.length;
 
                     for (var i = 0; i < len; i++) {
-                        var li = document.createElement('li');
-                        var a = document.createElement('a');
-                        var text = document.createTextNode(content[i]['title']);
-
-                        a.href = '/posts/' + encodeURI(content[i]['title']);
-                        a.appendChild(text);
-                        li.appendChild(a);
-                        frag.appendChild(li);
+                        shll.create('li')
+                            .insert('a', function() {
+                                this.href = '/posts/' + encodeURI(content[i]['title']);
+                                this.appendChild(document.createTextNode(content[i]['title']));
+                            })
+                            .appendTo(ul);
                     }
-
-                    ul.appendChild(frag);
-                    this.listen();
                 });
         }, true)
         .when('/posts/?title', '/html/views/posts.view.html', function(params) {
