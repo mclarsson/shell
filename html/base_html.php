@@ -4,8 +4,9 @@
 
         <meta charset="UTF-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="doc_root" content="<?php echo DOC_ROOT ?>" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        
+        <meta name="doc_root" content="<?php echo DOC_ROOT ?>" />
         <meta name="csrf_token" content="<?php echo User::loggedIn() ? $_SESSION['csrf_token'] : ''; ?>" />
 
         <meta name="application-name" content="Application Name">
@@ -44,14 +45,12 @@
     </head>
 
     <body>
-    <!-- Example
         <nav>
             <a href="/">Home</a>
-            <a href="/products">Products</a>
+            <a href="/posts">Posts</a>
             <a href="/about">About</a>
             <?php echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; ?>
         </nav>
-    -->
 
         <div id="content"></div>
     </body>
