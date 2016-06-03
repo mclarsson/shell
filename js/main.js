@@ -3,7 +3,9 @@ function log(s) {
 }
 
 (function() {
-    shll.when('/', '/html/views/home.view.html')
+    shll // Home page
+        .when('/', '/html/views/home.view.html')
+        // Posts page
         .when('/posts', '/html/views/posts.view.html', function() {
             var from = 0,
                 to = 32;
@@ -27,9 +29,21 @@ function log(s) {
                     }
                 });
         }, true)
+        // Single post page
         .when('/posts/?title', '/html/views/posts.view.html', function(params) {
-            document.getElementById('post').innerHTML = decodeURI(params.title);
+
+            shll.get('/api/find', {
+                    title: params.title
+                })
+                .then(function(response) {
+                    var post = JSON.parse(response)[0];
+                    document.getElementById('post').innerHTML = '';
+                    document.getElementById('post').innerHTML += '<h1>' + post.title + '</h1>';
+                    document.getElementById('post').innerHTML += '<div style="max-width:30em;">' + post.text.substring(0, 418) + '</div>';
+                });
         })
+        // About page
         .when('/about', '/html/views/about.view.html')
+        // Login page
         .when('/login', '/html/views/login.view.html');
 })();

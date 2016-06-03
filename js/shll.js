@@ -256,7 +256,7 @@
                         for (part = 0; part < n; part++) {
                             // Check if part is parameter
                             if (route[part].charAt(0) === application.uri_param_indicator) {
-                                params[route[part].substring(1)] = path[part];
+                                params[route[part].substring(1)] = decodeURI(path[part]);
                             } else if (route[part] !== path[part]) {
                                 // Doesn't match
                                 continue loop;
