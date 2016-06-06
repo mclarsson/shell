@@ -13,133 +13,77 @@
     //////////////
     // Settings //
     //////////////
-    
+
     /**
      * Default information and settings
      * @type {Object}
      */
-    var application = {}; 
-    
+    var app = {};
+
     /**
-     * Initiates application
+     * Initiates app
      */
     function init() {
-        application = { 
+        app = {
             /**
              * Div containing page content.
              * @type {Element}
              */
             container: document.getElementById('content'),
-            
+
             /**
-             * Root path of application (perhaps /blog/ instead of just /).
+             * Root path of app (perhaps /blog/ instead of just /).
              * @type {String}
              */
-            doc_root: document.getElementsByName('doc_root')[0].content,
-            
+            doc_root: document.getElementsByName('doc_root')[0].content || '',
+
             /**
-             * Character to denote paramater in path
+             * Character to denote paramater in path.
              * @type {String}
              */
-            uri_param_indicator: '?'
+            uri_param_indicator: '?',
+
+            /**
+             * Character to replace blank space in URIs.
+             * @type {String}
+             */
+            uri_space_replacement: '-',
+
+            /**
+             * Character to replace uri_space_replacement if present.
+             * @type {String}
+             */
+            uri_space_standin: '_'
         };
 
         router.init();
     };
 
-    // Initiate application when all js has loaded
+    // Initiate app when all js has loaded
     window.addEventListener ? addEventListener("load", init, false) : window.attachEvent ? attachEvent("onload", init) : (onload = init);
 
-    ///////////////////////////////
-    // Private methods & objects //
-    ///////////////////////////////
-    
-    /**
-     * Adds event listener to element.
-     * @param  {Element}  el Element to add to.
-     * @param  {String}   ev Type of event.
-     * @param  {Function} fn Callback.
-     */
-    function listen(el, ev, fn) {
-        if (el.attachEvent) {
-            el['e' + ev + fn] = fn;
-            el[ev + fn] = function() {
-                el['e' + ev + fn](window.event);
-            }
-            el.attachEvent('on' + ev, el[ev + fn]);
-        } else {
-            el.addEventListener(ev, fn, false);
-        }
-    };
-    
-    /**
-     * Display content on screen.
-     * @type {Object}
-     */
-    var html = (function() {
-        /**
-         * Current template being displayed.
-         * @type {String}
-         */
-        var current = '';
+    ////////////////////////////////////
+    // Private objects and functions  //
+    ////////////////////////////////////
 
-        return {
-            
-            /**
-             * Render template if it's not the current.
-             * @param  {String} file path to template to be rendered.
-             * @param  {Boolean} force load new template despite it being current.
-             * @return {http}        Enables more callbacks to be added.
-             */
-            render: function(file, force) {
-                var xhr = new http();
-                // Don't render same template again
-                if (current === file && !force) {
-                    // Still fire off callbacks
-                    xhr.unload();
-                } else {
-                    var self = this;
-                    xhr.get(application.doc_root + file).then(function(response) {
-                        current = file;
-                        self.set(response);
-                    });
-                }
-                return xhr;
-            },
-            
-            /**
-             * Sets content on page.
-             * @param {String} html html content to be displayed.
-             */
-            set: function(html) {
-                application.container.innerHTML = html;
-                // Add doc_root to form actions
-                for (var i = 0, len = document.forms.length; i < len; i++) {
-                    document.forms[i].action = application.doc_root + document.forms[i].getAttribute('action');
-                }
-                router.listen();
-            }
-        }
-    })();
-    
     /**
      * Handles navigation through Ajax.
      * @type {Object}
      */
     var router = (function() {
-        
+
         /**
          * Holder for registered routes.
          * @type {Array}
          */
         var routes = [];
-        
+
         /**
          * Links that are currently being listened to.
          * @type {Array}
          */
         var links = [];
-        
+
         /**
          * Current uri
          * @type {String}
@@ -158,12 +102,15 @@
                     self.update();
                 });
             },
-            
+
             /**
              * Updates router to current path
              */
             update: function() {
-                var path = document.location.pathname.replace(application.doc_root, '');
+                var path = document.location.href;
+                path = path.replace(document.location.origin, '');
+                path = path.replace(app.doc_root, '');
+
                 if (current !== path) {
                     current = path;
                     var route = this.match(path);
@@ -172,7 +119,7 @@
                     }
                 }
             },
-            
+
             /**
              * Adds event listeners to links which match with registered routes.
              */
@@ -181,6 +128,7 @@
                     href = '',
                     route = {},
                     listens = false;
+
                 for (var i = 0, len = document.links.length; i < len; i++) {
                     href = document.links[i].getAttribute('href');
                     route = this.match(href);
@@ -197,7 +145,7 @@
                     }
                 }
             },
-            
+
             /**
              * Determiness if a link is already being listened to.
              * @param  {Element} link Link to be checked.
@@ -211,7 +159,7 @@
                 }
                 return false;
             },
-            
+
             /**
              * Navigates to and renders link if it's registered.
              * @param  {Element} link Clicked link
@@ -220,14 +168,15 @@
             process: function(link) {
                 var href = link.getAttribute('href'),
                     route = this.match(href);
+
                 if (route) {
                     // Don't reload same route
                     if (href !== current) {
                         if (history.pushState) {
                             // html5 navigation
-                            history.pushState(null, null, application.doc_root + href);
+                            history.pushState(null, null, app.doc_root + href);
                         } else {
-                            location.assign(application.doc_root + href);
+                            location.assign(app.doc_root + href);
                         }
                         current = href;
                         this.render(route);
@@ -236,17 +185,16 @@
                 }
                 return false;
             },
-            
+
             /**
              * Checks if uri matches with any registered routes and returns match if found or false otherwise.
              * @param  {String} uri URI to compare with routes.
              * @return {Object|Boolean}      Registered route with parameters or didn't match any registered routes.
              */
             match: function(uri) {
-                var path = uri.split('/'),
-                    len = routes.length,
-                    i;
-                loop: for (i = 0; i < len; i++) {
+                var path = uri.split('/');
+
+                loop: for (var i = 0, len = routes.length; i < len; i++) {
                     var route = routes[i].path.split('/');
                     // Same number of parts
                     if (route.length === path.length) {
@@ -255,33 +203,34 @@
                             part;
                         for (part = 0; part < n; part++) {
                             // Check if part is parameter
-                            if (route[part].charAt(0) === application.uri_param_indicator) {
-                                params[route[part].substring(1)] = decodeURI(path[part]);
+                            if (route[part].charAt(0) === app.uri_param_indicator) {
+                                params[route[part].substring(1)] = fromURI(path[part]);
                             } else if (route[part] !== path[part]) {
                                 // Doesn't match
                                 continue loop;
                             }
                         }
                         var match = routes[i];
-                        match.params = params;
+                        match['params'] = params;
                         return match;
                     }
                 }
                 return false;
             },
-            
+
             /**
              * Handles rendering of route.
              * @param  {Object} route Route to be rendered.
              */
             render: function(route) {
-                html.render(route.template, route.force).then(function() {
-                    if (typeof route.callback === 'function') {
-                        route.callback.call(shll, route.params);
-                    }
-                });
+                html.render(route.template, route.force)
+                    .then(function() {
+                        if (typeof route.callback === 'function') {
+                            route.callback.call(shll, route.params);
+                        }
+                    });
             },
-            
+
             /**
              * Registers new route.
              * @param {String}   path     URI to watch for.
@@ -299,7 +248,55 @@
             }
         }
     })();
-    
+
+    /**
+     * Display content on screen.
+     * @type {Object}
+     */
+    var html = (function() {
+        /**
+         * Current template being displayed.
+         * @type {String}
+         */
+        var current = '';
+
+        return {
+            /**
+             * Render template if it's not the current.
+             * @param  {String} file path to template to be rendered.
+             * @param  {Boolean} force load new template despite it being current.
+             * @return {http}        Enables more callbacks to be added.
+             */
+            render: function(file, force) {
+                var xhr = new http();
+                // Don't render same template again
+                if (current === file && !force) {
+                    // Still fire off callbacks
+                    xhr.unload();
+                } else {
+                    var self = this;
+                    xhr.get(app.doc_root + file).then(function(response) {
+                        current = file;
+                        self.set(response);
+                    });
+                }
+                return xhr;
+            },
+
+            /**
+             * Sets content on page.
+             * @param {String} html html content to be displayed.
+             */
+            set: function(html) {
+                app.container.innerHTML = html;
+                // Add doc_root to form actions
+                for (var i = 0, len = document.forms.length; i < len; i++) {
+                    document.forms[i].action = app.doc_root + document.forms[i].getAttribute('action');
+                }
+            }
+        }
+    })();
+
     /**
      * Makes AJAX calls.
      * @type {Object}
@@ -310,13 +307,13 @@
          * @type {Array}
          */
         var callbacks = [];
-        
+
         /**
          * Private XMLHttpRequest
          * @type {XMLHttpRequest}
          */
         var xhr;
-        
+
         return {
             /**
              * Concatenates parameters into url appropriate string.
@@ -339,7 +336,7 @@
                 }
                 return string;
             },
-            
+
             /**
              * Performs GET request on provided url.
              * @param  {String} url        URL to be called.
@@ -357,10 +354,9 @@
                 xhr.onload = function() {
                     self.unload(this.response);
                 };
-                callbacks = [];
                 return this;
             },
-            
+
             /**
              * Adds function to list of callbacks fired off when request finished.
              * @param  {Function} callback Callback for request.
@@ -369,7 +365,7 @@
                 callbacks.push(callback);
                 return this;
             },
-            
+
             /**
              * Fires of all callbacks and resets callback Array.
              */
@@ -387,11 +383,54 @@
         };
     };
 
+    /**
+     * Adds event listener to element.
+     * @param  {Element}  el Element to add to.
+     * @param  {String}   ev Type of event.
+     * @param  {Function} fn Callback.
+     */
+    function listen(el, ev, fn) {
+        if (el.attachEvent) {
+            el['e' + ev + fn] = fn;
+            el[ev + fn] = function() {
+                el['e' + ev + fn](window.event);
+            }
+            el.attachEvent('on' + ev, el[ev + fn]);
+        } else {
+            el.addEventListener(ev, fn, false);
+        }
+    };
+
+    /**
+     * Encodes string into uri with special characters from settings.
+     * @param  {String} string String to be encoded.
+     * @return {String}        Encoded string.
+     */
+    function toURI(string){ 
+        string = string.trim();
+        string = string.split(app.uri_space_replacement).join(app.uri_space_standin);
+        string = string.split(' ').join(app.uri_space_replacement);
+        string = encodeURI(string);
+        return string;
+    }
+
+    /**
+     * Decodes special uri encoded by toURI.
+     * @param  {String} uri URI to be decoded
+     * @return {String}     Decoded uri.
+     */
+    function fromURI(uri){
+        uri = uri.split(app.uri_space_replacement).join(' ');
+        uri = uri.split(app.uri_space_standin).join(app.uri_space_replacement);
+        uri = decodeURI(uri);
+        return uri;
+    }
+
     /////////
     // API //
     /////////
-    
-    var shll = {  
+
+    var shll = {
         /**
          * Register a path with html and callback to be rendered when visited.
          * @param  {String}   path     Path to watch for
@@ -404,7 +443,7 @@
             router.add(path, template, callback, force);
             return this;
         },
-        
+
         /**
          * Makes get request.
          * @param  {String} url        URL to be called.
@@ -413,19 +452,19 @@
          */
         get: function(url, parameters) {
             var xhr = new http();
-            xhr.get(application.doc_root + url, parameters);
+            xhr.get(app.doc_root + url, parameters);
             return xhr;
         },
-        
+
         /**
-         * Updates application.
+         * Updates app.
          * @return {shll} Enables callbacks and linking.
          */
         digest: function() {
             router.listen();
             return this;
         },
-        
+
         /**
          * Creates DOM element and returns tools for altering.
          * @param  {String} type Type of element.
@@ -434,14 +473,14 @@
         create: function(type) {
             var element = document.createElement(type),
                 object = {
-                    
+
                     /**
                      * Adds child node to element.
                      * @param  {String}   type     Type of child node.
                      * @param  {Function} callback Fires if set.
                      * @return {Object}            Returns self for linking.
                      */
-                    insert: function(type, callback) {
+                    append: function(type, callback) {
                         var child = document.createElement(type);
                         element.appendChild(child);
                         if (typeof callback === 'function') {
@@ -449,19 +488,60 @@
                         }
                         return this;
                     },
-                    
+
                     /**
                      * Appends this element to another.
                      * @param  {Element} node Parent node.
                      */
                     appendTo: function(node) {
                         node.appendChild(element);
+                    },
+
+                    /**
+                     * Adds event listener to element.
+                     * @param  {String}   event    Event to listen for.
+                     * @param  {Function} callback Callback to be fired.
+                     * @return {Object}            Return self for linking.
+                     */
+                    listen: function(event, callback){
+                        listen(element, event, callback);
+                        return this;
                     }
                 };
 
             return object;
+        },
+
+        /**
+         * Adds event listener to element.
+         * @param  {Element}  element  Node to add event listener to.
+         * @param  {String}   event    Event to listen for.
+         * @param  {Function} callback Callback to be fired.
+         * @return {Object}            Return self for linking.
+         */
+        listen: function(element, event, callback){
+            listen(element, event, callback);
+            return this;
+        },
+
+        /**
+         * Returns encoded uri.
+         * @param  {String} string String to be encoded.
+         * @return {String}        Encoded uri. 
+         */
+        uri: function(string){
+            return toURI(string);
+        },
+
+        /**
+         * Returns decoded uri.
+         * @param  {String} uri URI to be decoded.
+         * @return {String}     Decoded uri.
+         */
+        decodeURI: function(uri){
+            return fromURI(uri);
         }
     };
-    
+
     return shll;
 });

@@ -1,0 +1,15 @@
+body {
+	font-family: 'Arial' !important;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button, input {
+	font-family: inherit;
+}

@@ -65,7 +65,7 @@ class Application
     {
         $from = isset($_GET['from']) ? $_GET['from'] : 0;
         $to   = isset($_GET['to']) ? $_GET['to'] : 30;
-        $sql  = "SELECT * FROM posts ORDER BY created_at DESC LIMIT ?, ?";
+        $sql  = "SELECT * FROM posts ORDER BY created_at DESC, id DESC LIMIT ?, ?";
 
         DB::respond($sql, 'ii', [$from, $to]);
     }
