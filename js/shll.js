@@ -18,13 +18,14 @@
      * Default information and settings
      * @type {Object}
      */
-    var app = {};
+    var settings = {};
 
     /**
-     * Initiates app
+     * Initiates shll
      */
     function init() {
-        app = {
+
+        settings = {
             /**
              * Div containing page content.
              * @type {Element}
@@ -109,7 +110,7 @@
             update: function() {
                 var path = document.location.href;
                 path = path.replace(document.location.origin, '');
-                path = path.replace(app.doc_root, '');
+                path = path.replace(settings.doc_root, '');
 
                 if (current !== path) {
                     current = path;
@@ -174,9 +175,9 @@
                     if (href !== current) {
                         if (history.pushState) {
                             // html5 navigation
-                            history.pushState(null, null, app.doc_root + href);
+                            history.pushState(null, null, settings.doc_root + href);
                         } else {
-                            location.assign(app.doc_root + href);
+                            location.assign(settings.doc_root + href);
                         }
                         current = href;
                         this.render(route);
@@ -194,27 +195,31 @@
             match: function(uri) {
                 var path = uri.split('/');
 
-                loop: for (var i = 0, len = routes.length; i < len; i++) {
-                    var route = routes[i].path.split('/');
-                    // Same number of parts
-                    if (route.length === path.length) {
-                        var params = {},
-                            n = route.length,
-                            part;
-                        for (part = 0; part < n; part++) {
-                            // Check if part is parameter
-                            if (route[part].charAt(0) === app.uri_param_indicator) {
-                                params[route[part].substring(1)] = fromURI(path[part]);
-                            } else if (route[part] !== path[part]) {
-                                // Doesn't match
-                                continue loop;
+                loop:
+                    for (var i = 0, len = routes.length; i < len; i++) {
+                        var route = routes[i].path.split('/');
+
+                        // Same number of parts
+                        if (route.length === path.length) {
+                            var params = {},
+                                n = route.length,
+                                part;
+
+                            for (part = 0; part < n; part++) {
+                                // Check if part is parameter
+                                if (route[part].charAt(0) === settings.uri_param_indicator) {
+                                    params[route[part].substring(1)] = fromURI(path[part]);
+                                } else if (route[part] !== path[part]) {
+                                    // Doesn't match
+                                    continue loop;
+                                }
                             }
+
+                            var match = routes[i];
+                            match['params'] = params;
+                            return match;
                         }
-                        var match = routes[i];
-                        match['params'] = params;
-                        return match;
                     }
-                }
                 return false;
             },
 
@@ -275,7 +280,7 @@
                     xhr.unload();
                 } else {
                     var self = this;
-                    xhr.get(app.doc_root + file).then(function(response) {
+                    xhr.get(settings.doc_root + file).then(function(response) {
                         current = file;
                         self.set(response);
                     });
@@ -288,10 +293,10 @@
              * @param {String} html html content to be displayed.
              */
             set: function(html) {
-                app.container.innerHTML = html;
+                settings.container.innerHTML = html;
                 // Add doc_root to form actions
                 for (var i = 0, len = document.forms.length; i < len; i++) {
-                    document.forms[i].action = app.doc_root + document.forms[i].getAttribute('action');
+                    document.forms[i].action = settings.doc_root + document.forms[i].getAttribute('action');
                 }
             }
         }
@@ -406,10 +411,10 @@
      * @param  {String} string String to be encoded.
      * @return {String}        Encoded string.
      */
-    function toURI(string){ 
+    function toURI(string) {
         string = string.trim();
-        string = string.split(app.uri_space_replacement).join(app.uri_space_standin);
-        string = string.split(' ').join(app.uri_space_replacement);
+        string = string.split(settings.uri_space_replacement).join(settings.uri_space_standin);
+        string = string.split(' ').join(settings.uri_space_replacement);
         string = encodeURI(string);
         return string;
     }
@@ -419,9 +424,9 @@
      * @param  {String} uri URI to be decoded
      * @return {String}     Decoded uri.
      */
-    function fromURI(uri){
-        uri = uri.split(app.uri_space_replacement).join(' ');
-        uri = uri.split(app.uri_space_standin).join(app.uri_space_replacement);
+    function fromURI(uri) {
+        uri = uri.split(settings.uri_space_replacement).join(' ');
+        uri = uri.split(settings.uri_space_standin).join(settings.uri_space_replacement);
         uri = decodeURI(uri);
         return uri;
     }
@@ -452,12 +457,12 @@
          */
         get: function(url, parameters) {
             var xhr = new http();
-            xhr.get(app.doc_root + url, parameters);
+            xhr.get(settings.doc_root + url, parameters);
             return xhr;
         },
 
         /**
-         * Updates app.
+         * Updates settings.
          * @return {shll} Enables callbacks and linking.
          */
         digest: function() {
@@ -473,7 +478,6 @@
         create: function(type) {
             var element = document.createElement(type),
                 object = {
-
                     /**
                      * Adds child node to element.
                      * @param  {String}   type     Type of child node.
@@ -503,7 +507,7 @@
                      * @param  {Function} callback Callback to be fired.
                      * @return {Object}            Return self for linking.
                      */
-                    listen: function(event, callback){
+                    listen: function(event, callback) {
                         listen(element, event, callback);
                         return this;
                     }
@@ -519,7 +523,7 @@
          * @param  {Function} callback Callback to be fired.
          * @return {Object}            Return self for linking.
          */
-        listen: function(element, event, callback){
+        listen: function(element, event, callback) {
             listen(element, event, callback);
             return this;
         },
@@ -529,7 +533,7 @@
          * @param  {String} string String to be encoded.
          * @return {String}        Encoded uri. 
          */
-        uri: function(string){
+        uri: function(string) {
             return toURI(string);
         },
 
@@ -538,7 +542,7 @@
          * @param  {String} uri URI to be decoded.
          * @return {String}     Decoded uri.
          */
-        decodeURI: function(uri){
+        decodeURI: function(uri) {
             return fromURI(uri);
         }
     };

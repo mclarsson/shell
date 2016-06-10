@@ -39,7 +39,7 @@ function log(s) {
                         for (var i = 0; i < len; i++) {
                             shll.create('li')
                                 .append('a', function() {
-                                    this.href = '/posts/' + shll.uri(content[i]['title']);
+                                    this.href = '/article/' + shll.uri(content[i]['title']);
                                     this.appendChild(document.createTextNode(content[i]['id'] + ' - ' + content[i]['title']));
                                 })
                                 .appendTo(ul);
@@ -76,17 +76,16 @@ function log(s) {
     /////////////////
     // Application //
     /////////////////
-
     shll.when('/', '/html/views/home.view.html')
         .when('/posts', '/html/views/posts.view.html', function() {
             pctr.reset()
                 .get();
-                
+
             shll.listen(document.getElementById('load_posts'), 'click', function() {
                 pctr.get();
             });
         }, true)
-        .when('/posts/?title', '/html/views/posts.view.html', function(params) {
+        .when('/article/?title', '/html/views/posts.view.html', function(params) {
             pctr.find(params.title);
         })
         .when('/about', '/html/views/about.view.html')
