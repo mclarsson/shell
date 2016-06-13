@@ -32,6 +32,8 @@
         <title>shll</title>
 
         <!-- css -->
+        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css'>
         <link href="css/app.css" rel="stylesheet" type="text/css" />
 
         <!-- js -->

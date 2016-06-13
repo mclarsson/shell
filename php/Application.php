@@ -65,7 +65,7 @@ class Application
     {
         $from = isset($_GET['from']) ? $_GET['from'] : 0;
         $to   = isset($_GET['to']) ? $_GET['to'] : 30;
-        $sql  = "SELECT * FROM posts ORDER BY created_at DESC, id DESC LIMIT ?, ?";
+        $sql  = "SELECT * FROM posts ORDER BY id DESC LIMIT ?, ?";
 
         DB::respond($sql, 'ii', [$from, $to]);
     }
@@ -75,10 +75,9 @@ class Application
      */
     private static function findPost()
     {
-        $title = isset($_GET['title']) ? $_GET['title'] : '';
+        $title = isset($_GET['title']) ? urldecode($_GET['title']) : '';
         $id    = isset($_GET['id']) ? $_GET['id'] : -1;
         $sql   = "SELECT * FROM posts WHERE title = ? OR id = ?";
-
         DB::respond($sql, 'si', [$title, $id]);
     }
 }

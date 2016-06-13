@@ -56,7 +56,7 @@ function log(s) {
              */
             find: function(title, id) {
                 shll.get('/api/find', {
-                        title: title,
+                        title: encodeURIComponent(title),
                         id: id
                     })
                     .then(function(response) {

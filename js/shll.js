@@ -119,6 +119,7 @@
                         this.render(route);
                     }
                 }
+                return this;
             },
 
             /**
@@ -466,7 +467,7 @@
          * @return {shll} Enables callbacks and linking.
          */
         digest: function() {
-            router.listen();
+            router.update().listen();
             return this;
         },
 
