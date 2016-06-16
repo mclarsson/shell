@@ -33,7 +33,7 @@
             container: document.getElementById('content'),
 
             /**
-             * Root path of app (perhaps /blog/ instead of just /).
+             * Root path of app (/sub/ instead of just /).
              * @type {String}
              */
             doc_root: document.getElementsByName('doc_root')[0].content || '',
@@ -42,7 +42,13 @@
              * Character to denote paramater in path.
              * @type {String}
              */
-            uri_param_indicator: '?',
+            uri_required_param_indicator: '&',
+
+            /**
+             * Character to denote paramater in path but parameter not required.
+             * @type {String}
+             */
+            uri_optional_param_indicator: '?',
 
             /**
              * Character to replace blank space in URIs.
@@ -155,7 +161,7 @@
              */
             listensTo: function(link) {
                 for (var i = 0, len = links.length; i < len; i++) {
-                    if (links[i] === link || links[i].isSameNode(link)) {
+                    if (links[i] === link) {
                         return true;
                     }
                 }
@@ -174,18 +180,27 @@
                 if (route) {
                     // Don't reload same route
                     if (href !== current) {
-                        if (history.pushState) {
-                            // html5 navigation
-                            history.pushState(null, null, settings.doc_root + href);
-                        } else {
-                            location.assign(settings.doc_root + href);
-                        }
-                        current = href;
-                        this.render(route);
+                        this.set(href)
+                            .update()
+                            .render(route);
                     }
                     return true;
                 }
                 return false;
+            },
+
+            /**
+             * Sets the path to new href.
+             * @param {String} href New URI.
+             */
+            set: function(href) {
+                if (history.pushState) {
+                    // html5 navigation
+                    history.pushState(null, null, settings.doc_root + href);
+                } else {
+                    location.assign(settings.doc_root + href);
+                }
+                return this;
             },
 
             /**
@@ -198,28 +213,30 @@
 
                 loop:
                     for (var i = 0, len = routes.length; i < len; i++) {
-                        var route = routes[i].path.split('/');
+                        var registered = routes[i].path.split('/'),
+                            n = registered.length,
+                            params = {};
 
-                        // Same number of parts
-                        if (route.length === path.length) {
-                            var params = {},
-                                n = route.length,
-                                part;
-
-                            for (part = 0; part < n; part++) {
-                                // Check if part is parameter
-                                if (route[part].charAt(0) === settings.uri_param_indicator) {
-                                    params[route[part].substring(1)] = fromURI(path[part]);
-                                } else if (route[part] !== path[part]) {
-                                    // Doesn't match
+                        for (var part = 0; part < n; part++) {
+                            if (registered[part].charAt(0) === settings.uri_required_param_indicator) {
+                                // Is required parameter
+                                if (path.length === n) {
+                                    params[registered[part].substring(1)] = fromURI(path[part]);
+                                } else {
                                     continue loop;
                                 }
+                            } else if (registered[part].charAt(0) === settings.uri_optional_param_indicator) {
+                                // Is optional parameter
+                                params[registered[part].substring(1)] = fromURI(path[part]) || '';
+                            } else if (registered[part] !== path[part]) {
+                                // Doesn't match
+                                continue loop;
                             }
-
-                            var match = routes[i];
-                            match['params'] = params;
-                            return match;
                         }
+
+                        var match = routes[i];
+                        match['params'] = params;
+                        return match;
                     }
                 return false;
             },
@@ -235,6 +252,7 @@
                             route.callback.call(shll, route.params);
                         }
                     });
+                return this;
             },
 
             /**
@@ -413,6 +431,7 @@
      * @return {String}        Encoded string.
      */
     function toURI(string) {
+        if (string === '' || typeof string !== 'string') return false;
         string = string.trim();
         string = string.split(settings.uri_space_replacement).join(settings.uri_space_standin);
         string = string.split(' ').join(settings.uri_space_replacement);
@@ -426,6 +445,7 @@
      * @return {String}     Decoded uri.
      */
     function fromURI(uri) {
+        if (uri === '' || typeof uri !== 'string') return false;
         uri = uri.split(settings.uri_space_replacement).join(' ');
         uri = uri.split(settings.uri_space_standin).join(settings.uri_space_replacement);
         uri = decodeURI(uri);
@@ -447,6 +467,16 @@
          */
         when: function(path, template, callback, force) {
             router.add(path, template, callback, force);
+            return this;
+        },
+
+        /**
+         * Set url to new href.
+         * @param  {String} href New url.
+         * @return {shll}        Return self for linking
+         */
+        navigate: function(href) {
+            router.set(href);
             return this;
         },
 

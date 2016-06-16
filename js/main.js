@@ -9,27 +9,29 @@ function log(s) {
     //////////////////
 
     /**
-     * Controller for /posts and /posts/?title.
+     * Controller for posts
      */
-    var pctr = (function() {
-        // TODO:
-        // Dessa variabler har samma värde när man går bak och fram (popstate)
-        var from = 0,
-            to = 30;
+    var pctr = (function(){
+        var current = 1;
+        var from = 0;
+        var to = 5;
 
         return {
-            reset: function() {
-                from = 0;
+            update: function(page){
+                current = page === '' ? current : +page;
+                from = to * (current - 1);
+                document.getElementById('posts').innerHTML = '';
+                this.get(0, from + to);
                 return this;
             },
 
             /**
              * Fetches posts.
              */
-            get: function() {
+            get: function(start, count) {
                 shll.get('/api/get', {
-                        from: from,
-                        to: to
+                        from: start,
+                        to: count
                     })
                     .then(function(response) {
                         var content = JSON.parse(response),
@@ -44,9 +46,14 @@ function log(s) {
                                 })
                                 .appendTo(ul);
                         }
-
-                        from += to;
                     });
+            },
+
+            next: function(){
+                current += 1;
+                shll.navigate('/blogg/' + current);
+                this.get(from, to);
+                return this;
             },
 
             /**
@@ -64,7 +71,7 @@ function log(s) {
                         if (post) {
                             document.getElementById('post').innerHTML = '';
                             document.getElementById('post').innerHTML += '<h1>' + post.title + '</h1>';
-                            document.getElementById('post').innerHTML += '<div style="max-width:30em;">' + post.text.substring(0, 418) + '</div>';
+                            document.getElementById('post').innerHTML += '<div class="post-text">' + post.text.substring(0) + '</div>';
                         } else {
                             document.getElementById('post').innerHTML = '<i>The post you are looking for doesn\'t exist...</i>';
                         }
@@ -76,18 +83,20 @@ function log(s) {
     /////////////////
     // Application //
     /////////////////
-    shll.when('/', '/html/views/home.view.html')
-        .when('/posts', '/html/views/posts.view.html', function() {
-            pctr.reset()
-                .get();
+    shll.when('/', '/html/views/home.view.html', function() {
+
+        })
+        .when('/blogg/?page', '/html/views/posts.view.html', function(params) {
+            pctr.update(params.page);
 
             shll.listen(document.getElementById('load_posts'), 'click', function() {
-                pctr.get();
+                log('click');
+                pctr.next();
             });
-        }, true)
-        .when('/article/?title', '/html/views/posts.view.html', function(params) {
+        })
+        .when('/article/&title', '/html/views/article.view.html', function(params) {
+            log(params);
             pctr.find(params.title);
         })
-        .when('/about', '/html/views/about.view.html')
         .when('/login', '/html/views/login.view.html');
 })();

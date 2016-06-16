@@ -32,8 +32,8 @@
         <title>shll</title>
 
         <!-- css -->
-        <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700' rel='stylesheet' type='text/css'>
+        <link rel="dns-prefetch" href="//fonts.googleapis.com/">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:800|Roboto+Mono" rel="stylesheet">
         <link href="css/app.css" rel="stylesheet" type="text/css" />
 
         <!-- js -->
@@ -48,11 +48,90 @@
 
     <body>
         <nav>
-            <a href="/">Home</a>
-            <a href="/posts">Posts</a>
-            <a href="/about">About</a>
-            <?php echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; ?>
+            <a href="/">Martin Larsson</a>
+            <a href="/blogg">Blogg</a>
+            <?php /* echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; */ ?>
         </nav>
+
+        <style>
+            .grid {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+            }
+
+            .grid-holder {
+                max-width: 64rem;
+                margin: 0 auto;
+                position: relative;
+            }
+
+            .vertical,
+            .horizontal {
+                position: absolute;
+                width: 100%;
+                height: 64rem;
+            }
+
+            .grid .vertical .line {
+                width: 100%;
+                height: 4rem;
+                border-bottom: 1px solid cyan;
+            }
+
+            .grid .horizontal .line {
+                height: 100%;
+                width: 4rem;
+                float: left;
+                border-left: 1px solid cyan;
+            }
+
+            .grid .horizontal .line:last-child {
+                border-right: 1px solid cyan;
+            }
+        </style>
+
+        <div class="grid">
+            <div class="grid-holder">
+                <div class="vertical">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="horizontal">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </div>
+        </div>
 
         <div id="content"></div>
     </body>
