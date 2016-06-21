@@ -5,7 +5,7 @@ html {
 body {
     margin: 0;
     padding-top: 4rem;
-    font-family: 'Roboto Mono', 'Arial';
+    font-family: 'Roboto Mono', monospace;
     /*
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -53,9 +53,19 @@ nav a:hover {
 
 /* Content */
 
+@keyframes wrap {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 .wrap {
     max-width: 1024px;
     margin: 4rem auto;
+    animation: wrap 0.2s;
 }
 
 .row {
@@ -88,6 +98,14 @@ p {
 
 
 /* Home */
+
+#canvas {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
 
 .ml {
     /*
@@ -139,7 +157,7 @@ ul#posts li a:hover {
     background: #fff;
     outline: none;
     cursor: pointer;
-    border: 0.5rem solid #222;
+    border: 0.25rem solid #222;
 }
 
 
@@ -149,7 +167,7 @@ ul#posts li a:hover {
 
 #post h1 {
     margin-top: 0;
-    margin-bottom: 4rem;
+    margin-bottom: 8rem;
     line-height: 4rem;
     font-size: 3rem;
     font-weight: 800;
@@ -157,9 +175,51 @@ ul#posts li a:hover {
 }
 
 #post .post-text {
-    font-family: 'Georgia';
+    font-family: 'Georgia', serif;
     max-width: 40rem;
     margin: 0 auto;
+    /* Makes line-height 32px */
     font-size: 19.7775031px;
     line-height: 1.618em;
+}
+
+#post h2 {
+    margin-top: 4rem;
+    margin-bottom: 0rem;
+    line-height: 4rem;
+    font-size: 1.5rem;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#post h3 {
+    margin-top: 4rem;
+    margin-bottom: 0rem;
+    line-height: 2rem;
+    font-size: 19.7775031px;
+    line-height: 1.618em;
+}
+
+#post a {
+    text-decoration: none;
+    color: inherit;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #757575;
+}
+
+#post a:hover {
+    background: rgba(0, 255, 0, 0.25);
+}
+
+#post ul, #post ol {
+    margin: 2rem 0;
+    padding-left: 4rem;
+}
+
+
+/* Media */
+
+@media screen and (max-width: 64rem) {
+    nav, .wrap {
+        max-width: 48rem;
+    }
 }

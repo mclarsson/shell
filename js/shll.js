@@ -92,17 +92,31 @@
         var links = [];
 
         /**
-         * Current uri
+         * Current uri.
          * @type {String}
          */
-        var current = '';
+        var current_uri = '';
+
+        /**
+         * Current route object.
+         * @type {Object}
+         */
+        var current_route = {};
+
+        /**
+         * Previous route object.
+         * @type {Object}
+         */
+        var prev_route = {};
 
         return {
             /**
              * Initiates router
              */
             init: function() {
+                // Handle initial page load
                 this.update();
+
                 // Handle back and forward button presses
                 var self = this;
                 listen(window, 'popstate', function(e) {
@@ -118,11 +132,12 @@
                 path = path.replace(document.location.origin, '');
                 path = path.replace(settings.doc_root, '');
 
-                if (current !== path) {
-                    current = path;
-                    var route = this.match(path);
-                    if (route) {
-                        this.render(route);
+                if (current_uri !== path) {
+                    current_uri = path;
+                    prev_route = current_route;
+                    current_route = this.match(path);
+                    if (current_route) {
+                        this.render(current_route);
                     }
                 }
                 return this;
@@ -179,10 +194,10 @@
 
                 if (route) {
                     // Don't reload same route
-                    if (href !== current) {
+                    if (href !== current_uri) {
                         this.set(href)
-                            .update()
-                            .render(route);
+                            .update();
+                        /*.render(route);*/
                     }
                     return true;
                 }
@@ -251,6 +266,10 @@
                         if (typeof route.callback === 'function') {
                             route.callback.call(shll, route.params);
                         }
+
+                        if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
+                            prev_route.offload.call(shll, route.params);
+                        }
                     });
                 return this;
             },
@@ -262,11 +281,12 @@
              * @param {Function} callback Callback to be fired when rendered.
              * @param {Boolean}  force    Load template even if it's the current one being displayed.
              */
-            add: function(path, template, callback, force) {
+            add: function(path, template, callback, offload, force) {
                 routes.push({
                     path: path,
                     template: template,
                     callback: callback,
+                    offload: offload,
                     force: force
                 });
             }
@@ -465,8 +485,8 @@
          * @param  {Boolean}  force    Load template even if its the current one being displayed.
          * @return {shll}              Return self for linking
          */
-        when: function(path, template, callback, force) {
-            router.add(path, template, callback, force);
+        when: function(path, template, callback, offload, force) {
+            router.add(path, template, callback, offload, force);
             return this;
         },
 
@@ -476,7 +496,8 @@
          * @return {shll}        Return self for linking
          */
         navigate: function(href) {
-            router.set(href);
+            router.set(href)
+                .update();
             return this;
         },
 
@@ -497,7 +518,12 @@
          * @return {shll} Enables callbacks and linking.
          */
         digest: function() {
-            router.update().listen();
+            router.listen();
+            return this;
+        },
+
+        update: function() {
+            router.update();
             return this;
         },
 

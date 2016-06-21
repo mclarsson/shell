@@ -2,6 +2,16 @@ function log(s) {
     console.log(s);
 }
 
+window.onkeydown = function(e) {
+    if (e.key === 'g') {
+        var grid = document.getElementsByClassName('grid')[0];
+        grid.style.display = grid.style.display == "none" ? "block" : "none";
+    } else if (e.key === 'z') {
+        var grid = document.getElementsByClassName('grid')[0];
+        grid.style.zIndex = grid.style.zIndex == 1 ? -1 : 1;
+    }
+};
+
 (function() {
 
     //////////////////
@@ -11,18 +21,49 @@ function log(s) {
     /**
      * Controller for posts
      */
-    var pctr = (function(){
-        var current = 1;
-        var from = 0;
-        var to = 5;
+    var pctr = (function() {
+
+        var pages = [];
+
+        var page_length = 30;
+
+        var initial_load = true;
 
         return {
-            update: function(page){
-                current = page === '' ? current : +page;
-                from = to * (current - 1);
-                document.getElementById('posts').innerHTML = '';
-                this.get(0, from + to);
-                return this;
+            update: function(page) {
+                page = page === '' ? 1 : +page;
+
+                var from, to;
+
+                if (!initial_load && page !== 1 && page === pages.length + 1) {
+                    // next page
+                    from = page * page_length;
+                    to = page_length;
+                } else {
+                    // previous page or new load
+                    document.getElementById('posts').innerHTML = '';
+                    pages = [];
+                    from = 0;
+                    to = page * page_length;
+                }
+
+                this.get(from, to);
+
+                if (initial_load) {
+                    shll.listen(document.getElementById('load_posts'), 'click', function() {
+                        pctr.next();
+                    });
+                    initial_load = false;
+                }
+            },
+
+            reset: function() {
+                pages = [];
+                initial_load = true;
+            },
+
+            next: function() {
+                shll.navigate('/blogg/' + (pages.length + 1));
             },
 
             /**
@@ -38,7 +79,25 @@ function log(s) {
                             ul = document.getElementById('posts'),
                             len = content.length;
 
+                        // Holder for new page.
+                        var page = [];
+
                         for (var i = 0; i < len; i++) {
+                            page.push(content[i]);
+
+                            if (page.length === page_length) {
+                                // Page finished, create new
+                                pages.push(page);
+                                page = [];
+                            } else if (page.length === 1) {
+                                // New page, add page number
+                                shll.create('li')
+                                    .append('span', function() {
+                                        this.appendChild(document.createTextNode(pages.length + 1));
+                                    })
+                                    .appendTo(ul);
+                            }
+
                             shll.create('li')
                                 .append('a', function() {
                                     this.href = '/article/' + shll.uri(content[i]['title']);
@@ -47,13 +106,6 @@ function log(s) {
                                 .appendTo(ul);
                         }
                     });
-            },
-
-            next: function(){
-                current += 1;
-                shll.navigate('/blogg/' + current);
-                this.get(from, to);
-                return this;
             },
 
             /**
@@ -80,22 +132,21 @@ function log(s) {
         }
     })();
 
+    function test() {
+        log('test');
+    };
+
     /////////////////
     // Application //
     /////////////////
     shll.when('/', '/html/views/home.view.html', function() {
-
         })
         .when('/blogg/?page', '/html/views/posts.view.html', function(params) {
             pctr.update(params.page);
-
-            shll.listen(document.getElementById('load_posts'), 'click', function() {
-                log('click');
-                pctr.next();
-            });
+        }, function() {
+            pctr.reset();
         })
         .when('/article/&title', '/html/views/article.view.html', function(params) {
-            log(params);
             pctr.find(params.title);
         })
         .when('/login', '/html/views/login.view.html');
