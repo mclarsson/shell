@@ -601,6 +601,15 @@
          */
         decodeURI: function(uri) {
             return fromURI(uri);
+        },
+
+        /**
+         * Sets the title of the page.
+         * @param  {String} title New title
+         * @return {Object}       Return self for linking.
+         */
+        title: function(title){
+            document.title = title;
         }
     };
 

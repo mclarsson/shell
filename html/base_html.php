@@ -33,7 +33,7 @@
 
         <!-- css -->
         <link rel="dns-prefetch" href="//fonts.googleapis.com/">
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:800|Roboto+Mono" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Asap:700|Roboto+Mono|PT+Serif" rel="stylesheet">
         <link href="css/app.css" rel="stylesheet" type="text/css" />
 
         <!-- js -->
@@ -48,7 +48,7 @@
 
     <body>
         <nav>
-            <a href="/">Martin Larsson</a>
+            <a href="/">Martin</a>
             <a href="/blogg">Blogg</a>
             <?php /* echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; */?>
         </nav>
@@ -98,11 +98,11 @@
             .grid .columns .col {
                 width: 16rem;
                 height: 100%;
-                border-left: 1px solid black;
+                border-left: 1px solid pink;
             }
 
             .grid .columns .col:last-child {
-                border-right: 1px solid black;
+                border-right: 1px solid pink;
             }
 
         </style>

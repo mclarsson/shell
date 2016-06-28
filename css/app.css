@@ -6,14 +6,11 @@ body {
     margin: 0;
     padding-top: 4rem;
     font-family: 'Roboto Mono', monospace;
-    /*
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -moz-font-feature-settings: "liga" on;
-    */
     color: rgba(0, 0, 0, 0.9);
-    letter-spacing: -.003em;
     overflow-y: scroll;
 }
 
@@ -22,7 +19,9 @@ body {
 }
 
 
-/* Nav */
+/* 
+    Nav 
+*/
 
 nav {
     position: fixed;
@@ -38,7 +37,7 @@ nav {
 }
 
 nav a {
-    width: 50%;
+    padding: 0 1rem;
     display: inline-block;
     float: left;
     color: #222;
@@ -47,13 +46,15 @@ nav a {
 }
 
 nav a:hover {
-    color: #000;
+    text-decoration: underline;
 }
 
 
-/* Content */
+/* 
+    Content 
+ */
 
-@keyframes wrap {
+@keyframes fadeIn {
     from {
         opacity: 0;
     }
@@ -65,12 +66,12 @@ nav a:hover {
 .wrap {
     max-width: 1024px;
     margin: 4rem auto;
-    animation: wrap 0.2s;
+    animation: fadeIn 0.3s;
 }
 
 .row {
     overflow: hidden;
-    margin-bottom: 4rem;
+    margin-bottom: 8rem;
 }
 
 .col {
@@ -90,14 +91,10 @@ nav a:hover {
     width: 100%;
 }
 
-p {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    line-height: 1.618em;
-}
 
-
-/* Home */
+/*
+    Home
+ */
 
 #canvas {
     position: absolute;
@@ -107,23 +104,40 @@ p {
     height: 100%;
 }
 
-.ml {
-    /*
-    width: 100%;
-    max-width: 12rem;
-    */
+.home h3 {
+    font-weight: normal;
+    font-style: italic;
+    line-height: 4rem;
+    margin: 0;
+}
+
+.home p {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    line-height: 2rem;
+}
+
+.home ul {
+    margin: 0;
+    padding-left: 19px;
+}
+
+.home li {
+    line-height: 2rem;
+}
+
+.home .portrait {
+    line-height: 16px;
+}
+
+.home .ml {
     line-height: 4rem;
     letter-spacing: 0.1em;
 }
 
-.tomato {
-    height: 24rem;
-    margin-right: 8rem;
-    background: #f1404b;
-}
-
-
-/* Blogg */
+/*
+    Blogg
+ */
 
 
 /* List of posts */
@@ -161,21 +175,23 @@ ul#posts li a:hover {
 }
 
 
-/* Article */
+/* 
+    Article 
+ */
 
 #post {}
 
 #post h1 {
-    margin-top: 0;
-    margin-bottom: 8rem;
+    margin: 8rem 0;
     line-height: 4rem;
     font-size: 3rem;
     font-weight: 800;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Asap', sans-serif;
 }
 
 #post .post-text {
-    font-family: 'Georgia', serif;
+    font-family: 'Georgia';
+    font-family: 'PT Serif';
     max-width: 40rem;
     margin: 0 auto;
     /* Makes line-height 32px */
@@ -188,7 +204,7 @@ ul#posts li a:hover {
     margin-bottom: 0rem;
     line-height: 4rem;
     font-size: 1.5rem;
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Asap', sans-serif;
 }
 
 #post h3 {
@@ -199,27 +215,25 @@ ul#posts li a:hover {
     line-height: 1.618em;
 }
 
-#post a {
-    text-decoration: none;
-    color: inherit;
-    padding-bottom: 2px;
-    border-bottom: 1px solid #757575;
+#post p {
+    margin-top: 0;
+    margin-bottom: 2rem;
 }
 
-#post a:hover {
-    background: rgba(0, 255, 0, 0.25);
-}
-
-#post ul, #post ol {
+#post ul,
+#post ol {
     margin: 2rem 0;
     padding-left: 4rem;
 }
 
 
-/* Media */
+/* 
+    Media 
+ */
 
 @media screen and (max-width: 64rem) {
-    nav, .wrap {
+    nav,
+    .wrap {
         max-width: 48rem;
     }
 }

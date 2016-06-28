@@ -37,7 +37,7 @@ window.onkeydown = function(e) {
 
                 if (!initial_load && page !== 1 && page === pages.length + 1) {
                     // next page
-                    from = page * page_length;
+                    from = (page - 1) * page_length;
                     to = page_length;
                 } else {
                     // previous page or new load
@@ -140,13 +140,16 @@ window.onkeydown = function(e) {
     // Application //
     /////////////////
     shll.when('/', '/html/views/home.view.html', function() {
+            shll.title('shll');
         })
         .when('/blogg/?page', '/html/views/posts.view.html', function(params) {
+            shll.title('shll | blogg');
             pctr.update(params.page);
         }, function() {
             pctr.reset();
         })
         .when('/article/&title', '/html/views/article.view.html', function(params) {
+            shll.title('shll | ' + params.title);
             pctr.find(params.title);
         })
         .when('/login', '/html/views/login.view.html');
