@@ -33,6 +33,12 @@
             container: document.getElementById('content'),
 
             /**
+             * Name of server hosting app
+             * @type {String}
+             */
+            server_name: document.getElementsByName('server_name')[0].content || '',
+
+            /**
              * Root path of app (/sub/ instead of just /).
              * @type {String}
              */
@@ -86,6 +92,12 @@
         var routes = [];
 
         /**
+         * Route object for 404 error handling.
+         * @type {Object}
+         */
+        var route_404;
+
+        /**
          * Links that are currently being listened to.
          * @type {Array}
          */
@@ -128,9 +140,7 @@
              * Updates router to current path
              */
             update: function() {
-                var path = document.location.href;
-                path = path.replace(document.location.origin, '');
-                path = path.replace(settings.doc_root, '');
+                var path = document.location.pathname.replace(settings.doc_root, '');
 
                 if (current_uri !== path) {
                     current_uri = path;
@@ -138,9 +148,25 @@
                     current_route = this.match(path);
                     if (current_route) {
                         this.render(current_route);
+                    } else {
+                        this.handleNoMatch();
                     }
                 }
                 return this;
+            },
+
+            /**
+             * Checks to see if path is on server, renders 404.
+             */
+            handleNoMatch: function() {
+                var path_origin = document.location.hostname;
+                if (path_origin === settings.server_name) {
+                    if (typeof route_404 !== 'undefined') {
+                        this.render(route_404);
+                    } else {
+                        this.render(routes[0]);
+                    }
+                }
             },
 
             /**
@@ -197,7 +223,6 @@
                     if (href !== current_uri) {
                         this.set(href)
                             .update();
-                        /*.render(route);*/
                     }
                     return true;
                 }
@@ -224,6 +249,7 @@
              * @return {Object|Boolean}      Registered route with parameters or didn't match any registered routes.
              */
             match: function(uri) {
+
                 var path = uri.split('/');
 
                 loop:
@@ -249,10 +275,24 @@
                             }
                         }
 
+                        // Loop through GET variables (example.com?variable=value)
+                        var search = document.location.search.substring(1);
+                        if (typeof search !== 'undefined') {
+                            var GET = search.substr(uri.indexOf('?') + 1);
+                            var GET_array = GET.split('&');
+                            for (var g = 0; g < GET_array.length; g++) {
+                                if (GET_array[g].indexOf('=') !== -1) {
+                                    var variable = GET_array[g].split('=');
+                                    params[variable[0]] = variable[1];
+                                }
+                            }
+                        }
+
                         var match = routes[i];
                         match['params'] = params;
                         return match;
                     }
+
                 return false;
             },
 
@@ -270,25 +310,30 @@
                         if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
                             prev_route.offload.call(shll, route.params);
                         }
+
+                        if (typeof route.title === 'string') {
+                            shll.title(route.title);
+                        }
                     });
                 return this;
             },
 
             /**
              * Registers new route.
-             * @param {String}   path     URI to watch for.
-             * @param {String}   template URI to html to be rendered.
-             * @param {Function} callback Callback to be fired when rendered.
-             * @param {Boolean}  force    Load template even if it's the current one being displayed.
+             * @param {String}   route  Route Object
              */
-            add: function(path, template, callback, offload, force) {
-                routes.push({
-                    path: path,
-                    template: template,
-                    callback: callback,
-                    offload: offload,
-                    force: force
-                });
+            add: function(route) {
+                routes.push(route);
+            },
+
+            /**
+             * Set new error route.
+             * @param {String}   route  Route Object
+             */
+            addErrorRoute: function(error, route) {
+                if (error === '404') {
+                    route_404 = route;
+                }
             }
         }
     })();
@@ -453,9 +498,10 @@
     function toURI(string) {
         if (string === '' || typeof string !== 'string') return false;
         string = string.trim();
+        //string = string.replace('?', '%3f');
         string = string.split(settings.uri_space_replacement).join(settings.uri_space_standin);
         string = string.split(' ').join(settings.uri_space_replacement);
-        string = encodeURI(string);
+        string = encodeURI(string).replace('?', '%3f').replace('&', '%26');
         return string;
     }
 
@@ -468,7 +514,7 @@
         if (uri === '' || typeof uri !== 'string') return false;
         uri = uri.split(settings.uri_space_replacement).join(' ');
         uri = uri.split(settings.uri_space_standin).join(settings.uri_space_replacement);
-        uri = decodeURI(uri);
+        uri = decodeURI(uri).replace('%3f', '?').replace('%26', '&');
         return uri;
     }
 
@@ -479,14 +525,32 @@
     var shll = {
         /**
          * Register a path with html and callback to be rendered when visited.
-         * @param  {String}   path     Path to watch for
-         * @param  {String}   template Path to html template to be rendered
-         * @param  {Function} callback Function to be fired off when page has been rendered
-         * @param  {Boolean}  force    Load template even if its the current one being displayed.
+         * @param  {String}   route    Route object
          * @return {shll}              Return self for linking
          */
-        when: function(path, template, callback, offload, force) {
-            router.add(path, template, callback, offload, force);
+        when: function(route) {
+            /*
+            Route Object
+            {
+                path:       URI to look for,
+                title:      Title which will be set on render, 
+                template:   Path to html template to be rendered,
+                callback:   Function to be fired off when page has been rendered,
+                offload:    Function to be called when exiting route,
+                force:      Force reload of template
+            }
+             */
+            router.add(route);
+            return this;
+        },
+
+        /**
+         * Register a path with html and callback to be rendered when 404 error is thrown.
+         * @param  {String}   route    Route object
+         * @return {shll}              Return self for linking
+         */
+        missing: function(route) {
+            router.addErrorRoute('404', route);
             return this;
         },
 
@@ -514,7 +578,7 @@
         },
 
         /**
-         * Updates settings.
+         * Updates router links.
          * @return {shll} Enables callbacks and linking.
          */
         digest: function() {
@@ -522,55 +586,13 @@
             return this;
         },
 
+        /**
+         * Updates router.
+         * @return {shll} Enables callbacks and linking.
+         */
         update: function() {
             router.update();
             return this;
-        },
-
-        /**
-         * Creates DOM element and returns tools for altering.
-         * @param  {String} type Type of element.
-         * @return {Object}      Methods for altering element.
-         */
-        create: function(type) {
-            var element = document.createElement(type),
-                object = {
-                    /**
-                     * Adds child node to element.
-                     * @param  {String}   type     Type of child node.
-                     * @param  {Function} callback Fires if set.
-                     * @return {Object}            Returns self for linking.
-                     */
-                    append: function(type, callback) {
-                        var child = document.createElement(type);
-                        element.appendChild(child);
-                        if (typeof callback === 'function') {
-                            callback.call(child);
-                        }
-                        return this;
-                    },
-
-                    /**
-                     * Appends this element to another.
-                     * @param  {Element} node Parent node.
-                     */
-                    appendTo: function(node) {
-                        node.appendChild(element);
-                    },
-
-                    /**
-                     * Adds event listener to element.
-                     * @param  {String}   event    Event to listen for.
-                     * @param  {Function} callback Callback to be fired.
-                     * @return {Object}            Return self for linking.
-                     */
-                    listen: function(event, callback) {
-                        listen(element, event, callback);
-                        return this;
-                    }
-                };
-
-            return object;
         },
 
         /**
@@ -608,10 +630,88 @@
          * @param  {String} title New title
          * @return {Object}       Return self for linking.
          */
-        title: function(title){
+        title: function(title) {
             document.title = title;
         }
     };
 
     return shll;
+});
+
+////////////
+// Create //
+////////////
+
+(function(root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define([], factory(root));
+    } else if (typeof exports === 'object') {
+        module.exports = factory(root);
+    } else {
+        root.create = factory(root);
+    }
+})(typeof global !== 'undefined' ? global : this.window || this.global, function(root) {
+    /**
+     * Creates DOM element and returns tools for altering.
+     * @param  {String} type Type of element.
+     * @return {Object}      Methods for altering element.
+     */
+    var create = function(type, callback) {
+        var element = document.createElement(type),
+            functions = {
+                /**
+                 * Adds child node to element.
+                 * @param  {String}   type     Type of child node.
+                 * @param  {Function} callback Fires if set.
+                 * @return {Object}            Returns self for linking.
+                 */
+                append: function(type, callback) {
+                    var child = document.createElement(type);
+                    element.appendChild(child);
+                    if (typeof callback === 'function') {
+                        callback.call(child);
+                    }
+                    return this;
+                },
+
+                /**
+                 * Appends this element to another.
+                 * @param  {Element} node Parent node.
+                 * @return {Object}       Return self for linking.
+                 */
+                appendTo: function(node) {
+                    node.appendChild(element);
+                    return this;
+                },
+
+                /**
+                 * Adds event listener to element.
+                 * @param  {String}   event    Event to listen for.
+                 * @param  {Function} callback Callback to be fired.
+                 * @return {Object}            Return self for linking.
+                 */
+                listen: function(event, callback) {
+                    shll.listen(element, event, callback);
+                    return this;
+                },
+
+                /**
+                 * Adds class to created element
+                 * @param {String} class Name of class.
+                 * @return {Object}      Return self for linking.
+                 */
+                addClass: function(name) {
+                    element.classList.add(name);
+                    return this;
+                }
+            };
+
+        if (typeof callback === 'function') {
+            callback.call(element);
+        }
+
+        return functions;
+    }
+
+    return create;
 });

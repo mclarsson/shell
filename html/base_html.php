@@ -5,7 +5,8 @@
         <meta charset="UTF-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
+        
+        <meta name="server_name" content="<?php echo $_SERVER['SERVER_NAME'] ?>" />
         <meta name="doc_root" content="<?php echo DOC_ROOT ?>" />
         <meta name="csrf_token" content="<?php echo User::loggedIn() ? $_SESSION['csrf_token'] : ''; ?>" />
 
@@ -30,13 +31,15 @@
         <meta name="referrer" content="never">
 
         <title>shll</title>
+        <link rel="icon" type="image/png" href="css/res/icons/Icon_16.ico">
 
-        <!-- css -->
+        <!-- css <link href="css/style.min.css" rel="stylesheet" type="text/css" /> -->
         <link rel="dns-prefetch" href="//fonts.googleapis.com/">
-        <link href="https://fonts.googleapis.com/css?family=Asap:700|Roboto+Mono|PT+Serif" rel="stylesheet">
-        <link href="css/app.css" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Asap:700i|PT+Serif:400i,400,700,700i" rel="stylesheet">
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
 
-        <!-- js -->
+        <!-- js <script src="js/app.min.js"></script> -->
+        <script src="js/polyfill.js"></script>
         <script src="js/shll.js"></script>
         <script src="js/main.js"></script>
 
@@ -50,111 +53,11 @@
         <nav>
             <a href="/">Martin</a>
             <a href="/blogg">Blogg</a>
-            <?php /* echo User::loggedIn() ? '<a target="_self" href="auth/logout">Log out</a>' : '<a href="/login">Login</a>'; */?>
+            <a href="/login">Login</a>
         </nav>
 
-        <style>
-            .grid {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-            }
-
-            .grid-holder {
-                max-width: 64rem;
-                margin: 0 auto;
-                position: relative;
-            }
-
-            .vertical,
-            .horizontal,
-            .columns {
-                position: absolute;
-                width: 100%;
-                height: 100vh;
-            }
-
-            .grid .horizontal .line {
-                width: 100%;
-                height: 4rem;
-                border-bottom: 1px solid cyan;
-            }
-
-            .grid .vertical .line {
-                height: 100%;
-                width: 4rem;
-                float: left;
-                border-left: 1px solid cyan;
-            }
-
-            .grid .vertical .line:last-child {
-                border-right: 1px solid cyan;
-            }
-
-            .grid .columns .col {
-                width: 16rem;
-                height: 100%;
-                border-left: 1px solid pink;
-            }
-
-            .grid .columns .col:last-child {
-                border-right: 1px solid pink;
-            }
-
-        </style>
-
-        <div class="grid">
-            <div class="grid-holder">
-                <div class="vertical">
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                </div>
-
-                <div class="horizontal">
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                    <div class="line"></div>
-                </div>
-
-                <div class="columns">
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                    <div class="col"></div>
-                </div>
-            </div>
+        <div class="wrap">
+            <div id="content"></div>
         </div>
-
-        <div id="content"></div>
     </body>
 </html>

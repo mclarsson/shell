@@ -2,26 +2,12 @@ function log(s) {
     console.log(s);
 }
 
-window.onkeydown = function(e) {
-    if (e.key === 'g') {
-        var grid = document.getElementsByClassName('grid')[0];
-        grid.style.display = grid.style.display == "none" ? "block" : "none";
-    } else if (e.key === 'z') {
-        var grid = document.getElementsByClassName('grid')[0];
-        grid.style.zIndex = grid.style.zIndex == 1 ? -1 : 1;
-    }
-};
-
 (function() {
-
-    //////////////////
-    // Controllers  //
-    //////////////////
 
     /**
      * Controller for posts
      */
-    var pctr = (function() {
+    var postController = (function() {
 
         var pages = [];
 
@@ -51,7 +37,7 @@ window.onkeydown = function(e) {
 
                 if (initial_load) {
                     shll.listen(document.getElementById('load_posts'), 'click', function() {
-                        pctr.next();
+                        postController.next();
                     });
                     initial_load = false;
                 }
@@ -91,17 +77,18 @@ window.onkeydown = function(e) {
                                 page = [];
                             } else if (page.length === 1) {
                                 // New page, add page number
-                                shll.create('li')
-                                    .append('span', function() {
-                                        this.appendChild(document.createTextNode(pages.length + 1));
+                                create('li', function() {
+                                        var string = 'Page ' + (pages.length + 1);
+                                        this.innerHTML = string;
                                     })
+                                    .addClass('page-number')
                                     .appendTo(ul);
                             }
 
-                            shll.create('li')
+                            create('li')
                                 .append('a', function() {
                                     this.href = '/article/' + shll.uri(content[i]['title']);
-                                    this.appendChild(document.createTextNode(content[i]['id'] + ' - ' + content[i]['title']));
+                                    this.appendChild(document.createTextNode(content[i]['title']));
                                 })
                                 .appendTo(ul);
                         }
@@ -132,25 +119,52 @@ window.onkeydown = function(e) {
         }
     })();
 
-    function test() {
-        log('test');
-    };
-
     /////////////////
     // Application //
     /////////////////
-    shll.when('/', '/html/views/home.view.html', function() {
-            shll.title('shll');
+
+    shll.when({
+            path: '/',
+            title: 'shll',
+            template: '/html/templates/home.html',
+            callback: function() {
+                shll.get('/api/js_api')
+                    .then(function(response){
+                        document.getElementById('api').innerHTML += response;
+                    });
+            }
         })
-        .when('/blogg/?page', '/html/views/posts.view.html', function(params) {
-            shll.title('shll | blogg');
-            pctr.update(params.page);
-        }, function() {
-            pctr.reset();
+        .when({
+            path: '/blogg/?page',
+            title: 'shll | blogg',
+            template: '/html/templates/posts.html',
+            callback: function(params) {
+                postController.update(params.page);
+            },
+            offload: function() {
+                postController.reset();
+            }
         })
-        .when('/article/&title', '/html/views/article.view.html', function(params) {
-            shll.title('shll | ' + params.title);
-            pctr.find(params.title);
+        .when({
+            path: '/article/&title',
+            template: '/html/templates/article.html',
+            callback: function(params) {
+                shll.title('shll | ' + params.title);
+                postController.find(params.title);
+
+                document.body.className = "clean";
+            },
+            offload: function() {
+                document.body.className = "";
+            }
         })
-        .when('/login', '/html/views/login.view.html');
+        .when({
+            path: '/login',
+            title: 'shll | login',
+            template: '/html/templates/login.html'
+        })
+        .missing({
+            title: 'shll | 404',
+            template: '/html/errors/404.html'
+        });
 })();
