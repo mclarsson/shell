@@ -1,0 +1,224 @@
+/*
+CONTENT
+    - Variables
+    - Mixins
+    - Style
+        - Body, html, *
+        - Wraps & containers
+        - Misc
+        - Navigation
+        - Text
+        - Forms
+        - Other elements
+        - Page specific rules
+ */
+
+/*********
+----------
+Variables
+----------
+*********/
+
+$max-width: 768px;
+
+$background: white;
+
+$text-color: black;
+$link-color: blue;
+$link-color-hover: red;
+
+/*********
+----------
+Mixins
+----------
+*********/
+
+@mixin textShadowToCropUnderline($background) {
+    text-shadow: .03em 0 $background, -.03em 0 $background, 0 .03em $background, 0 -.03em $background, .06em 0 $background, -.06em 0 $background, .09em 0 $background, -.09em 0 $background, .12em 0 $background, -.12em 0 $background, .15em 0 $background, -.15em 0 $background;
+}
+
+@mixin createUnderline($color) {
+    color: $color;
+    text-decoration: none;
+    @include textShadowToCropUnderline($background);
+    background-image: linear-gradient($background, $background), linear-gradient($background, $background), linear-gradient($color, $color);
+    background-size: .05em 1px, .05em 1px, 1px 1px;
+    background-repeat: no-repeat, no-repeat, repeat-x;
+    background-position: 0% 90%, 100% 90%, 0% 90%;
+    &::selection {
+        @include textShadowToCropUnderline($color);
+        background-color: $color;
+        color: #fff;
+    }
+    &::-moz-selection {
+        @include textShadowToCropUnderline($color);
+        background-color: $color;
+        color: #fff;
+    }
+    &:before, &:after, *, *:before, *:after {
+        text-shadow: none;
+    }
+}
+
+
+/*****************************************************************************************
+------------------------------------------------------------------------------------------
+                                        Style
+------------------------------------------------------------------------------------------
+*****************************************************************************************/
+
+
+/*********
+::::::::::
+Body, html, * 
+::::::::::
+*********/
+
+html, input, button {
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.618;
+}
+
+body {
+    overflow-y: scroll;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+/*********
+::::::::::
+Wraps & Containers
+::::::::::
+*********/
+
+// Top container
+.wrap, nav {
+    max-width: $max-width;
+    margin: 0 auto;
+}
+
+// Column layout
+.layout {
+    // Keep element from collapsing, without overflow:hidden;
+    &:before, &:after {
+        content: "";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+    // All columns float
+    & > * {
+        display: block;
+        float: left;
+    }
+    & .tenth, & ._10 {
+        width: 10%;
+    }
+    & .fifth, & ._20 {
+        width: 20%;
+    }
+    & .fourth, & ._25 {
+        width: 25%;
+    }
+    & .third, & ._33 {
+        width: (100% / 3);
+    }
+    & .half, & ._50 {
+        width: 50%;
+    }
+    & .two-thirds, & ._66 {
+        width: (100% / 3) * 2;
+    }
+    & .three-fourths, & ._75 {
+        width: 75%;
+    }
+    & .four-fifths, & ._80 {
+        width: 80%;
+    }
+    & .nine-tenths, & ._90 {
+        width: 90%;
+    }
+    & .full, & ._100 {
+        width: 100%;
+    }
+}
+
+
+/*********
+::::::::::
+Misc
+::::::::::
+*********/
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-button:vertical:increment, ::-webkit-scrollbar-button:vertical:decrement {
+    display: none;
+}
+
+::-webkit-scrollbar-track {}
+
+::-webkit-scrollbar-thumb {
+    background-color: #e0e0e0;
+}
+
+
+/*********
+::::::::::
+Navigation
+::::::::::
+*********/
+
+
+/*********
+::::::::::
+Forms
+::::::::::
+*********/
+
+
+/*********
+::::::::::
+Other elements
+::::::::::
+*********/
+
+a {
+    @include createUnderline($link-color);
+    // :visited can't change background-image, set the color to regular text color instead.
+    &:visited {
+        color: $text-color;
+    }
+    &:hover {
+        @include createUnderline($link-color-hover);
+    }
+}
+
+nav a {
+    @include createUnderline($text-color);
+    &:hover {
+        @include createUnderline($link-color-hover);
+    }
+}
+
+/*********
+::::::::::
+Page specific rules
+::::::::::
+*********/
+
+.page-number {
+    margin-top: 20px;
+    margin-left: -40px;
+    padding-left: 4px; 
+    list-style: none;
+    background: teal;
+    color: white;
+}

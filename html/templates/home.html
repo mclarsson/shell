@@ -1,0 +1,105 @@
+
+<h1>shll</h1>
+
+<p>Framework for SPA.</p>
+
+<style>
+
+body {
+	background: #eee;
+}
+
+h1 {
+	font-size: 36px;
+}
+
+h2 {
+	font-size: 26px;
+	color: #333;
+}
+
+h3 {
+	padding: 8px 16px;
+	color: #E37E74;
+	font-weight: 100;
+	font-size: 18px;
+	font-style: italic;
+	font-family: monospace;
+	letter-spacing: 1px;
+	background: #333;
+	border-radius: 3px;
+}
+
+article {
+	margin: 50px 0;
+	padding: 8px;
+	background: #fff;
+	border-radius: 3px;
+}
+
+h3 + article {
+	margin-top: 0;
+}
+
+code {
+	padding: 4px 8px;
+	color: #eee;
+	font-size: 18px;
+	font-style: italic;
+	letter-spacing: 1px;
+	background: #333;
+	border-radius: 4px;
+}
+
+.description {
+	color: #333;
+	font-size: 16px;
+	font-family: monospace;
+}
+
+.parameters, .parameters * {
+	font-size: 16px;
+	font-family: monospace;
+}
+
+.parameters table {
+	border-collapse: collapse;
+	font-style: italic;
+}
+
+.parameters.with-return tr:last-child td {
+	padding-top: 1.618em;
+}
+
+.parameters td {
+	padding-right: 20px;
+}
+
+.parameters td:nth-child(1) {
+	color: #424242;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.parameters td:nth-child(2) {
+}
+
+</style>
+
+<article>
+	<span class="parameters">
+		<i>Route object</i>
+		<table>
+			<tr><td>path</td>		<td>String</td>		<td>URI to look for</td></tr>
+			<tr><td>title</td>		<td>String</td>		<td>Title which will be set on render</td></tr>
+		    <tr><td>template</td>	<td>String</td>		<td>Path to html template to be rendered</td></tr>
+		    <tr><td>callback</td>	<td>Function</td>	<td>Function to be fired off when page has been rendered</td></tr>
+		    <tr><td>offload</td>	<td>Function</td>	<td>Function to be called when exiting route</td></tr>
+		    <tr><td>force</td>		<td>Boolean</td>	<td>Force reload of template</td></tr>
+		</table>
+	</span>
+</article>
+
+<section id="api">
+	<h2>API</h2>
+</section>
