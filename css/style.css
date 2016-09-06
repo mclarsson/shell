@@ -100,6 +100,12 @@ Misc
 Navigation
 ::::::::::
 *********/
+nav a {
+  color: blue;
+  text-decoration: none; }
+  nav a:hover {
+    color: purple; }
+
 /*********
 ::::::::::
 Forms
@@ -110,93 +116,82 @@ Forms
 Other elements
 ::::::::::
 *********/
-a {
-  color: blue;
-  text-decoration: none;
-  text-shadow: 0.03em 0 white, -0.03em 0 white, 0 0.03em white, 0 -0.03em white, 0.06em 0 white, -0.06em 0 white, 0.09em 0 white, -0.09em 0 white, 0.12em 0 white, -0.12em 0 white, 0.15em 0 white, -0.15em 0 white;
-  background-image: linear-gradient(white, white), linear-gradient(white, white), linear-gradient(blue, blue);
-  background-size: .05em 1px, .05em 1px, 1px 1px;
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: 0% 90%, 100% 90%, 0% 90%; }
-  a::selection {
-    text-shadow: 0.03em 0 blue, -0.03em 0 blue, 0 0.03em blue, 0 -0.03em blue, 0.06em 0 blue, -0.06em 0 blue, 0.09em 0 blue, -0.09em 0 blue, 0.12em 0 blue, -0.12em 0 blue, 0.15em 0 blue, -0.15em 0 blue;
-    background-color: blue;
-    color: #fff; }
-  a::-moz-selection {
-    text-shadow: 0.03em 0 blue, -0.03em 0 blue, 0 0.03em blue, 0 -0.03em blue, 0.06em 0 blue, -0.06em 0 blue, 0.09em 0 blue, -0.09em 0 blue, 0.12em 0 blue, -0.12em 0 blue, 0.15em 0 blue, -0.15em 0 blue;
-    background-color: blue;
-    color: #fff; }
-  a:before, a:after, a *, a *:before, a *:after {
-    text-shadow: none; }
-  a:visited {
-    color: black; }
-  a:hover {
-    color: red;
-    text-decoration: none;
-    text-shadow: 0.03em 0 white, -0.03em 0 white, 0 0.03em white, 0 -0.03em white, 0.06em 0 white, -0.06em 0 white, 0.09em 0 white, -0.09em 0 white, 0.12em 0 white, -0.12em 0 white, 0.15em 0 white, -0.15em 0 white;
-    background-image: linear-gradient(white, white), linear-gradient(white, white), linear-gradient(red, red);
-    background-size: .05em 1px, .05em 1px, 1px 1px;
-    background-repeat: no-repeat, no-repeat, repeat-x;
-    background-position: 0% 90%, 100% 90%, 0% 90%; }
-    a:hover::selection {
-      text-shadow: 0.03em 0 red, -0.03em 0 red, 0 0.03em red, 0 -0.03em red, 0.06em 0 red, -0.06em 0 red, 0.09em 0 red, -0.09em 0 red, 0.12em 0 red, -0.12em 0 red, 0.15em 0 red, -0.15em 0 red;
-      background-color: red;
-      color: #fff; }
-    a:hover::-moz-selection {
-      text-shadow: 0.03em 0 red, -0.03em 0 red, 0 0.03em red, 0 -0.03em red, 0.06em 0 red, -0.06em 0 red, 0.09em 0 red, -0.09em 0 red, 0.12em 0 red, -0.12em 0 red, 0.15em 0 red, -0.15em 0 red;
-      background-color: red;
-      color: #fff; }
-    a:hover:before, a:hover:after, a:hover *, a:hover *:before, a:hover *:after {
-      text-shadow: none; }
-
-nav a {
-  color: black;
-  text-decoration: none;
-  text-shadow: 0.03em 0 white, -0.03em 0 white, 0 0.03em white, 0 -0.03em white, 0.06em 0 white, -0.06em 0 white, 0.09em 0 white, -0.09em 0 white, 0.12em 0 white, -0.12em 0 white, 0.15em 0 white, -0.15em 0 white;
-  background-image: linear-gradient(white, white), linear-gradient(white, white), linear-gradient(black, black);
-  background-size: .05em 1px, .05em 1px, 1px 1px;
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  background-position: 0% 90%, 100% 90%, 0% 90%; }
-  nav a::selection {
-    text-shadow: 0.03em 0 black, -0.03em 0 black, 0 0.03em black, 0 -0.03em black, 0.06em 0 black, -0.06em 0 black, 0.09em 0 black, -0.09em 0 black, 0.12em 0 black, -0.12em 0 black, 0.15em 0 black, -0.15em 0 black;
-    background-color: black;
-    color: #fff; }
-  nav a::-moz-selection {
-    text-shadow: 0.03em 0 black, -0.03em 0 black, 0 0.03em black, 0 -0.03em black, 0.06em 0 black, -0.06em 0 black, 0.09em 0 black, -0.09em 0 black, 0.12em 0 black, -0.12em 0 black, 0.15em 0 black, -0.15em 0 black;
-    background-color: black;
-    color: #fff; }
-  nav a:before, nav a:after, nav a *, nav a *:before, nav a *:after {
-    text-shadow: none; }
-  nav a:hover {
-    color: red;
-    text-decoration: none;
-    text-shadow: 0.03em 0 white, -0.03em 0 white, 0 0.03em white, 0 -0.03em white, 0.06em 0 white, -0.06em 0 white, 0.09em 0 white, -0.09em 0 white, 0.12em 0 white, -0.12em 0 white, 0.15em 0 white, -0.15em 0 white;
-    background-image: linear-gradient(white, white), linear-gradient(white, white), linear-gradient(red, red);
-    background-size: .05em 1px, .05em 1px, 1px 1px;
-    background-repeat: no-repeat, no-repeat, repeat-x;
-    background-position: 0% 90%, 100% 90%, 0% 90%; }
-    nav a:hover::selection {
-      text-shadow: 0.03em 0 red, -0.03em 0 red, 0 0.03em red, 0 -0.03em red, 0.06em 0 red, -0.06em 0 red, 0.09em 0 red, -0.09em 0 red, 0.12em 0 red, -0.12em 0 red, 0.15em 0 red, -0.15em 0 red;
-      background-color: red;
-      color: #fff; }
-    nav a:hover::-moz-selection {
-      text-shadow: 0.03em 0 red, -0.03em 0 red, 0 0.03em red, 0 -0.03em red, 0.06em 0 red, -0.06em 0 red, 0.09em 0 red, -0.09em 0 red, 0.12em 0 red, -0.12em 0 red, 0.15em 0 red, -0.15em 0 red;
-      background-color: red;
-      color: #fff; }
-    nav a:hover:before, nav a:hover:after, nav a:hover *, nav a:hover *:before, nav a:hover *:after {
-      text-shadow: none; }
-
 /*********
 ::::::::::
 Page specific rules
 ::::::::::
 *********/
+body {
+  background: #eee; }
+
+h1 {
+  font-size: 36px; }
+
+h2 {
+  font-size: 26px;
+  color: #333; }
+
+h3, .page-number {
+  padding: 8px 16px;
+  color: #E37E74;
+  font-weight: 100;
+  font-size: 18px;
+  font-style: italic;
+  font-family: monospace;
+  letter-spacing: 1px;
+  background: #333;
+  border-radius: 3px; }
+
+article {
+  margin: 50px 0;
+  padding: 8px;
+  background: #fff;
+  border-radius: 3px; }
+
+h3 + article {
+  margin-top: 0; }
+
+code {
+  padding: 4px 8px;
+  color: #eee;
+  font-size: 18px;
+  font-style: italic;
+  letter-spacing: 1px;
+  background: #333;
+  border-radius: 4px; }
+
+.description {
+  color: #333;
+  font-size: 16px;
+  font-family: monospace; }
+
+.parameters, .parameters * {
+  font-size: 16px;
+  font-family: monospace; }
+
+.parameters table {
+  border-collapse: collapse;
+  font-style: italic; }
+
+.parameters.with-return tr:last-child td {
+  padding-top: 1.618em; }
+
+.parameters td {
+  padding-right: 20px; }
+
+.parameters td:nth-child(1) {
+  color: #424242;
+  font-weight: bold;
+  font-style: italic; }
+
 .page-number {
-  margin-top: 20px;
+  margin: 20px 0;
   margin-left: -40px;
-  padding-left: 4px;
-  list-style: none;
-  background: teal;
-  color: white; }
+  list-style: none; }
+
+#posts li a {
+  text-decoration: none; }
+  #posts li a:hover {
+    text-decoration: underline; }
 
 /*# sourceMappingURL=style.css.map */
