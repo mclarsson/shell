@@ -314,6 +314,17 @@
                         if (typeof route.title === 'string') {
                             shll.title(route.title);
                         }
+
+                        if (typeof route.activate === 'string') {
+                            var links = document.querySelectorAll('nav a');
+                            for (var i = 0; i < links.length; i++) {
+                                if (links[i].id === route.activate) {
+                                    links[i].className = 'active';
+                                } else {
+                                    links[i].className = '';
+                                }
+                            }
+                        }
                     });
                 return this;
             },
@@ -632,6 +643,16 @@
          */
         title: function(title) {
             document.title = title;
+        },
+
+        /**
+         * Sets the content on the page.
+         * @param {String} html Content to be set.
+         * @return {Object}     Return self for linking.
+         */
+        setContent: function(content) {
+            html.set(content);
+            return this;
         }
     };
 

@@ -47,17 +47,102 @@
         <noscript>
             <META HTTP-EQUIV="Refresh" CONTENT="0;URL=<?php echo DOC_ROOT ?>/html/errors/js_disabled.html">
         </noscript>
+
+        <style type="text/css">
+            .vertical-line {
+                height: 100%;
+                width: 32px;
+            }
+            .vertical-line {
+                border-left: 1px solid cyan;
+            }
+            .vertical-line:last-child {
+                border-right: 1px solid cyan;
+            }
+            .horizontal-line {
+                height: 32px;
+                width: 100%;
+            }
+            .horizontal-line {
+                border-bottom: 1px solid cyan;
+            }
+        </style>
     </head>
 
-    <body>
+    <body style="position:relative;">
         <nav>
-            <a href="/">Martin</a>
-            <a href="/blogg">Blogg</a>
-            <a href="/login">Login</a>
+            <div class="nav_links">
+                <a id="home"  href="/">shll</a>
+                <a id="blogg" href="/blogg">Blogg</a>
+                <a id="style" href="/style">Style</a>
+                <a id="auth_req" href="/auth_req">auth_req</a>
+                
+                <?php echo User::loggedIn() ? '<a href="auth/logout">Logout</a>' : '<a id="login" href="/login">Login</a>'; ?>
+            </div>
         </nav>
 
         <div class="wrap">
             <div id="content"></div>
+        </div>
+
+        <div id="vertical-lines" style="display: none; display: none; position: absolute; height: 100%; width: 100%; margin: 0 auto; left: 50%; top: 0; z-index: -1; max-width: 768px;">
+            <div style="position: relative; left: -50%; " class="layout">
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>     
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>   
+                <div class="vertical-line"></div>  
+            </div>
+        </div>
+        <div id="horizontal-lines"  style="display: none; display: none; position: absolute; height: 100%; width: 100%; margin: 0 auto; left: 50%; top: 0; z-index: -1; max-width: 768px;">
+            <div style="position: relative; left: -50%; " class="layout">
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>     
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div> 
+                <div class="horizontal-line"></div>     
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>  
+                <div class="horizontal-line"></div>     
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>   
+                <div class="horizontal-line"></div>    
+            </div>
         </div>
     </body>
 </html>

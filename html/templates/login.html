@@ -1,11 +1,17 @@
-<br>
+<h1>Login</h1>
 <form action="/auth/login" method="post">
-	<fieldset>
-		<legend>Login</legend>
-	    <label for="username">Username</label><br>
-	    <input id="username" name="username"/><br>
-	    <label for="password">Password</label><br>
-	    <input id="password" name="password"/><br><br>
+	<div class="layout">
+		<div class="half padding-right">
+		    <label for="username">Username</label>
+		    <input id="username" name="username"/>
+		</div>
+		<div class="half padding-left">
+		    <label for="password">Password</label>
+		    <input id="password" name="password"/>
+	    </div>
+	</div>
+
+    <div class="btn-group">
 		<input type="submit" value="Login">
-	</fieldset>
+    </div>
 </form>

@@ -126,10 +126,11 @@ function log(s) {
     shll.when({
             path: '/',
             title: 'shll',
+            activate: 'home',
             template: '/html/templates/home.html',
             callback: function() {
                 shll.get('/api/js_api')
-                    .then(function(response){
+                    .then(function(response) {
                         document.getElementById('api').innerHTML += response;
                     });
             }
@@ -137,6 +138,7 @@ function log(s) {
         .when({
             path: '/blogg/?page',
             title: 'shll | blogg',
+            activate: 'blogg',
             template: '/html/templates/posts.html',
             callback: function(params) {
                 postController.update(params.page);
@@ -147,6 +149,7 @@ function log(s) {
         })
         .when({
             path: '/article/&title',
+            activate: 'blogg',
             template: '/html/templates/article.html',
             callback: function(params) {
                 shll.title('shll | ' + params.title);
@@ -158,10 +161,44 @@ function log(s) {
                 document.body.className = "";
             }
         })
+        /*
+        AUTH
+         */
+        .when({
+            path: '/auth_req',
+            activate: 'auth_req',
+            template: '/html/templates/article.html',
+            callback: function(params) {
+                shll.get('/auth/template', {
+                    path: '/auth/test.html'
+                }).then(function(response){
+                    shll.setContent(response);
+                });
+            }
+        })
         .when({
             path: '/login',
             title: 'shll | login',
+            activate: 'login',
             template: '/html/templates/login.html'
+        })
+        .when({
+            path: '/style',
+            title: 'shll | style',
+            activate: 'style',
+            template: '/html/templates/style.html',
+            callback: function() {
+                document.onkeypress = function(e) {
+                    log(e.key);
+                    if(e.key === "g") {
+                        document.getElementById('vertical-lines').style.display = document.getElementById('horizontal-lines').style.display === 'none' ? '' : 'none';
+                        document.getElementById('horizontal-lines').style.display = document.getElementById('horizontal-lines').style.display === 'none' ? '' : 'none';
+                    } else if(e.key === "z") {
+                        document.getElementById('vertical-lines').style.zIndex = document.getElementById('horizontal-lines').style.zIndex === '-1' ? '1' : '-1';
+                        document.getElementById('horizontal-lines').style.zIndex = document.getElementById('horizontal-lines').style.zIndex === '-1' ? '1' : '-1';
+                    }
+                };
+            }
         })
         .missing({
             title: 'shll | 404',

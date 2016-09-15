@@ -20,9 +20,30 @@ Variables
 ----------
 *********/
 
+// Units
 $max-width: 768px;
+$h: 32px;
+$a: 16px;
+$header-height: $h * 2;
+// Colors
+// Grey
+$black: #333;
+$grey: #e0e0e0;
+$dark-grey: #555;
+$light-grey: #eee;
+$table-grey: #666;
+// Green
+$green: #2ecc71;
+$dark-green: #06A449;
+// Red
+$red: #F95959;
+// Blue
+$blue: #4993FA;
+// System colors
+$main-color: $blue;
 $background: white;
 $text-color: black;
+$border-color: $black;
 $link-color: blue;
 $link-color-hover: red;
 
@@ -32,30 +53,52 @@ Mixins
 ----------
 *********/
 
-@mixin textShadowToCropUnderline($background) {
-    text-shadow: .03em 0 $background, -.03em 0 $background, 0 .03em $background, 0 -.03em $background, .06em 0 $background, -.06em 0 $background, .09em 0 $background, -.09em 0 $background, .12em 0 $background, -.12em 0 $background, .15em 0 $background, -.15em 0 $background;
+@mixin transition() {
+    transition: all 0.1618s;
 }
 
-@mixin createUnderline($color) {
-    color: $color;
-    text-decoration: none;
-    @include textShadowToCropUnderline($background);
-    background-image: linear-gradient($background, $background), linear-gradient($background, $background), linear-gradient($color, $color);
-    background-size: .05em 1px, .05em 1px, 1px 1px;
-    background-repeat: no-repeat, no-repeat, repeat-x;
-    background-position: 0% 90%, 100% 90%, 0% 90%;
-    &::selection {
-        @include textShadowToCropUnderline($color);
-        background-color: $color;
-        color: #fff;
+@mixin border($type) {
+    @if $type=="all" {
+        border: 1px solid #333;
     }
-    &::-moz-selection {
-        @include textShadowToCropUnderline($color);
-        background-color: $color;
-        color: #fff;
+    @else if $type=="bottom" {
+        border-bottom: 1px solid #333;
     }
-    &:before, &:after, *, *:before, *:after {
-        text-shadow: none;
+    @else if $type=="top" {
+        border-top: 1px solid #333;
+    }
+    @else if $type=="left" {
+        border-left: 1px solid #333;
+    }
+    @else if $type=="right" {
+        border-right: 1px solid #333;
+    }
+    @else if $type=="not-top" {
+        border: 1px solid #333;
+        border-top: none;
+    }
+    @else if $type=="not-bottom" {
+        border: 1px solid #333;
+        border-bottom: none;
+    }
+    @else if $type=="not-right" {
+        border: 1px solid #333;
+        border-right: none;
+    }
+    @else if $type=="top-bottom" {
+        border: 1px solid #333;
+        border-left: none;
+        border-right: none;
+    }
+    @else if $type=="left-right" {
+        border: 1px solid #333;
+        border-top: none;
+        border-bottom: none;
+    }
+    @else if $type=="sides" {
+        border: 1px solid #333;
+        border-top: none;
+        border-bottom: none;
     }
 }
 
@@ -80,6 +123,8 @@ html, input, button {
 }
 
 body {
+    margin: 0;
+    padding-top: $header-height;
     overflow-y: scroll;
 }
 
@@ -95,9 +140,12 @@ Wraps & Containers
 *********/
 
 // Top container
-.wrap, nav {
+.wrap {
     max-width: $max-width;
     margin: 0 auto;
+    margin-bottom: $h;
+    padding-bottom: $h;
+    @include border("not-top");
 }
 
 // Column layout
@@ -115,8 +163,14 @@ Wraps & Containers
         display: block;
         float: left;
     }
+    & .sixteenth, & ._6 {
+        width: 6.25%;
+    }
     & .tenth, & ._10 {
         width: 10%;
+    }
+    & .eighth, & ._12 {
+        width: 12.5%;
     }
     & .fifth, & ._20 {
         width: 20%;
@@ -154,8 +208,20 @@ Misc
 ::::::::::
 *********/
 
+.padding {
+    padding: 0 $h;
+}
+
+.padding-right {
+    padding-right: $a;
+}
+
+.padding-left {
+    padding-left: $a;
+}
+
 ::-webkit-scrollbar {
-    width: 10px;
+    @include border("left");
 }
 
 ::-webkit-scrollbar-button:vertical:increment, ::-webkit-scrollbar-button:vertical:decrement {
@@ -165,7 +231,8 @@ Misc
 ::-webkit-scrollbar-track {}
 
 ::-webkit-scrollbar-thumb {
-    background-color: #e0e0e0;
+    background: $grey;
+    @include border("not-right");
 }
 
 
@@ -175,13 +242,103 @@ Navigation
 ::::::::::
 *********/
 
-nav a {
-    color: blue;
-    text-decoration: none;
-    &:hover {
-        color: purple;
+nav {
+    top: 0;
+    position: fixed;
+    width: 100%;
+    & .nav_links {
+        max-width: $max-width;
+        position: relative;
+        margin: 0 auto;
+        height: $header-height;
+        background: white;
+        text-align: center;
+        @include border("not-top");
+    }
+    & a {
+        width: auto;
+        min-width: 96px;
+        padding: 0 24px;
+        display: block;
+        float: left;
+        color: $black;
+        font-size: 14px;
+        line-height: $header-height - 1;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        text-decoration: none;
+        position: relative;
+        @include transition();
+        &::after {
+            content: '';
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            border: 1px solid transparent;
+            box-sizing: border-box;
+            @include transition();
+        }
+        &:hover {}
+        &:hover::after {
+            left: 8px;
+            right: 8px;
+            top: 8px;
+            bottom: 8px;
+            border-color: $blue;
+        }
+        &:active {}
+        &:active::after {
+            left: 12px;
+            right: 12px;
+            top: 12px;
+            bottom: 12px;
+        }
+        &.active {
+            background: white;
+            color: $blue;
+        }
+        &.active::after {}
     }
 }
+
+
+/*********
+::::::::::
+Text
+::::::::::
+*********/
+
+h1, h2, h3 {
+    margin: 0;
+    line-height: $h;
+    padding-left: $h;
+}
+
+h1 {
+    color: $background;
+    font-size: 1.5em;
+    line-height: $h * 2;
+    background: $border-color;
+}
+
+h3 {
+    line-height: $h * 2 - 1;
+    @include border("top");
+}
+
+p {
+    width: 100%;
+    margin: 0;
+    padding: 0 $h;
+    line-height: $h;
+}
+
+h2, h3, p {
+    margin-top: $h;
+}
+
 
 /*********
 ::::::::::
@@ -189,23 +346,98 @@ Forms
 ::::::::::
 *********/
 
-button {
-    padding: 8px 16px;
-    color: #E37E74;
-    font-weight: 100;
-    font-size: 18px;
-    font-style: italic;
-    font-family: monospace;
-    letter-spacing: 1px;
-    background: #333;
-    border-radius: 3px;
+form {
+    padding: 0 $h;
+    margin-bottom: 0;
 }
+
+label {
+    margin-top: $h;
+    padding-left: $a / 2;
+    display: block;
+    font-style: italic;
+    line-height: $a * 2;
+    letter-spacing: 0.02em;
+}
+
+input, button {
+    width: 100%;
+    height: $a * 2;
+    padding: 0 $a / 2 - 1;
+    outline: none;
+    display: block;
+    @include border("all");
+    &:focus {
+        border-color: $dark-green;
+    }
+}
+
+input[type="submit"], button {
+    width: auto;
+    padding: 0 $a;
+    display: inline-block;
+    background: $background;
+    &:active {
+        border-color: $dark-grey;
+        background: $light-grey;
+    }
+}
+
+.btn-group {
+    margin-top: $h;
+}
+
 
 /*********
 ::::::::::
 Other elements
 ::::::::::
 *********/
+
+ul, ol {
+    margin: 0;
+    margin-top: $h;
+    padding-left: $h * 2;
+}
+
+li {
+    min-height: $h;
+}
+
+table {
+    width: 100%;
+    max-width: 22 * $h;
+    margin: $h;
+    margin-bottom: 0;
+    font-size: inherit;
+    box-sizing: border-box;
+    border-collapse: collapse;
+    @include border("not-bottom");
+}
+
+th {
+    padding: 0;
+    line-height: $h - 2;
+    @include border("bottom");
+}
+
+tr {
+    @include border("bottom");
+}
+
+tr:nth-child(even) {
+    // background: $light-grey;
+}
+
+td {
+    padding: 0 $a / 2;
+    min-width: $h * 4 - $a + 1;
+    line-height: $h - 1;
+}
+
+td:not(:last-child) {
+    @include border("right");
+}
 
 
 /*********
@@ -214,95 +446,29 @@ Page specific rules
 ::::::::::
 *********/
 
-// Home
-body {
-    background: #eee;
-}
-
-h1 {
-    font-size: 36px;
-}
-
-h2 {
-    font-size: 26px;
-    color: #333;
-}
-
-h3, .page-number {
-    padding: 8px 16px;
-    color: #E37E74;
-    font-weight: 100;
-    font-size: 18px;
-    font-style: italic;
+.api_function {
+    padding-top: $a;
+    padding-bottom: $h;
     font-family: monospace;
-    letter-spacing: 1px;
-    background: #333;
-    border-radius: 3px;
-}
-
-article {
-    margin: 50px 0;
-    padding: 8px;
-    background: #fff;
-    border-radius: 3px;
-}
-
-h3 + article {
-    margin-top: 0;
-}
-
-code {
-    padding: 4px 8px;
-    color: #eee;
-    font-size: 18px;
-    font-style: italic;
-    letter-spacing: 1px;
-    background: #333;
-    border-radius: 4px;
-}
-
-.description {
-    color: #333;
-    font-size: 16px;
-    font-family: monospace;
-}
-
-.parameters, .parameters * {
-    font-size: 16px;
-    font-family: monospace;
-}
-
-.parameters table {
-    border-collapse: collapse;
-    font-style: italic;
-}
-
-.parameters.with-return tr:last-child td {
-    padding-top: 1.618em;
-}
-
-.parameters td {
-    padding-right: 20px;
-}
-
-.parameters td:nth-child(1) {
-    color: #424242;
-    font-weight: bold;
-    font-style: italic;
-}
-
-.parameters td:nth-child(2) {}
-
-// Blogg
-.page-number {
-    margin: 20px 0;
-    margin-left: -40px;
-    list-style: none;
-}
-
-#posts li a {
-    text-decoration: none;
-    &:hover {
-        text-decoration: underline;
+    border-bottom: 1px solid $dark-grey;
+    & code {
+        margin: $a;
+        font-size: 18px;
+        font-style: italic;
     }
+    & table {
+        width: auto;
+        border: none;
+    }
+    & td {
+        border: none;
+    }
+    & tr:last-child {
+        border: none;
+    }
+}
+
+#load_posts {
+    width: 100%;
+    height: $h * 2 - 2;
 }

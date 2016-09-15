@@ -31,6 +31,7 @@ class Application
         '/api/js_api'  => 'generate_JS_DOC',
         '/auth/login'  => 'login',
         '/auth/logout' => 'logout',
+        '/auth/template' => 'auth_template',
     ];
 
     /**
@@ -57,6 +58,24 @@ class Application
         User::logout();
         redirect('/');
         exit();
+    }
+    
+    /**
+     * Prints template if logged in.
+     * @return String Template.
+     */
+    private static function auth_template()
+    {
+        if(User::loggedIn()) {
+            $path =  getcwd() . '\html\templates' . $_GET['path'];
+            $shll = fopen($path, "r") or die("Unable to open file!");
+            // Read content
+            $content = fread($shll, filesize($path));
+            print $content;
+        } else {
+            print '<h1>Login Required</h1>';
+            print '<p>This page requires login.</p>';
+        }
     }
 
     /**
@@ -102,7 +121,6 @@ class Application
         // Loop array
         foreach ($pieces as $piece) {
             if ($piece != '' && trim($piece) != 'var shll = {' && !strpos($piece, 'var create =')) {
-                echo '<article>';
                 $start = strpos($piece, ': function(');
                 $piece = substr($piece, 0, $start);
                 $piece = trim($piece);
@@ -113,9 +131,9 @@ class Application
                 unset($info[0]);
                 $description = array_shift($info);
 
+                echo '<div class="api_function">';
                 echo '<code>.' . $name . '</code>';
                 echo '<p class="description">' . $description . '</p>';
-                echo '<span class="parameters with-return">';
                 echo '<table>';
                 foreach ($info as $line) {
                     echo '<tr>';
@@ -130,7 +148,7 @@ class Application
 
                             echo '<td><b>' . $type . '</b></td>';
                             echo '<td><i>' . $name . '</i></td>';
-                            echo '<td>'.$desc . '</td>';
+                            echo '<td>' . $desc . '</td>';
                         } else if (strpos($line, '@return')) {
                             $line = substr($line, 7);
                             $type = substr($line, strpos($line, '{') + 1, strpos($line, '}') - 3);
@@ -138,17 +156,16 @@ class Application
 
                             echo '<td><b>return</b></td>';
                             echo '<td><i>' . $type . '</i></td>';
-                            echo '<td>'.$desc . '</td>';
+                            echo '<td>' . $desc . '</td>';
                         }
                     }
                     echo '</tr>';
                 }
                 echo '</table>';
-                echo '</span>';
-                echo '</article>';
-            } else if (trim($piece) == 'var shll = {'){
+                echo '</div>';
+            } else if (trim($piece) == 'var shll = {') {
                 echo '<h3>shll</h3>';
-            } else if (strpos($piece, 'var create =')){
+            } else if (strpos($piece, 'var create =')) {
                 echo '<h3>create</h3>';
             }
         }
