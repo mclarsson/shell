@@ -74,10 +74,7 @@
             <div class="nav_links">
                 <a id="home"  href="/">shll</a>
                 <a id="blogg" href="/blogg">Blogg</a>
-                <a id="style" href="/style">Style</a>
-                <a id="auth_req" href="/auth_req">auth_req</a>
-                
-                <?php echo User::loggedIn() ? '<a href="auth/logout">Logout</a>' : '<a id="login" href="/login">Login</a>'; ?>
+                <?php echo User::loggedIn() ? '<a id="admin" href="/admin">Admin</a>' : ''; ?> 
             </div>
         </nav>
 

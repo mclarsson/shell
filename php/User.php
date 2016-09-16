@@ -111,7 +111,7 @@ class User
      * @param  string $token csrf token
      * @return boolean tokens match
      */
-    private static function confirm_csrf($token)
+    public static function confirm_csrf($token)
     {
         if (!isset($_SESSION)) {
             session_start();
@@ -126,5 +126,13 @@ class User
     public static function loggedIn()
     {
         return isset(self::getCurrent()['id']);
+    }
+
+    public static function create($username, $password)
+    {
+        $password = self::hash($password);
+        $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        DB::query($sql, 'ss', [$username, $password]);
+        redirect('/admin'); 
     }
 }

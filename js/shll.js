@@ -7,120 +7,98 @@
         root.shll = factory(root);
     }
 })(typeof global !== 'undefined' ? global : this.window || this.global, function(root) {
-
     'use strict';
-
     //////////////
     // Settings //
     //////////////
-
     /**
      * Default information and settings
      * @type {Object}
      */
     var settings = {};
-
     /**
      * Initiates shll
      */
     function init() {
-
         settings = {
             /**
              * Div containing page content.
              * @type {Element}
              */
             container: document.getElementById('content'),
-
             /**
              * Name of server hosting app
              * @type {String}
              */
             server_name: document.getElementsByName('server_name')[0].content || '',
-
             /**
              * Root path of app (/sub/ instead of just /).
              * @type {String}
              */
             doc_root: document.getElementsByName('doc_root')[0].content || '',
-
             /**
              * Character to denote paramater in path.
              * @type {String}
              */
             uri_required_param_indicator: '&',
-
             /**
              * Character to denote paramater in path but parameter not required.
              * @type {String}
              */
             uri_optional_param_indicator: '?',
-
             /**
              * Character to replace blank space in URIs.
              * @type {String}
              */
             uri_space_replacement: '-',
-
             /**
              * Character to replace uri_space_replacement if present.
              * @type {String}
              */
             uri_space_standin: '_'
         };
-
         router.init();
     };
-
     // Initiate app when all js has loaded
     window.addEventListener ? addEventListener("load", init, false) : window.attachEvent ? attachEvent("onload", init) : (onload = init);
-
     ////////////////////////////////////
     // Private objects and functions  //
     ////////////////////////////////////
-
     /**
      * Handles navigation through Ajax.
      * @type {Object}
      */
     var router = (function() {
-
         /**
          * Holder for registered routes.
          * @type {Array}
          */
         var routes = [];
-
         /**
          * Route object for 404 error handling.
          * @type {Object}
          */
         var route_404;
-
         /**
          * Links that are currently being listened to.
          * @type {Array}
          */
         var links = [];
-
         /**
          * Current uri.
          * @type {String}
          */
         var current_uri = '';
-
         /**
          * Current route object.
          * @type {Object}
          */
         var current_route = {};
-
         /**
          * Previous route object.
          * @type {Object}
          */
         var prev_route = {};
-
         return {
             /**
              * Initiates router
@@ -128,20 +106,17 @@
             init: function() {
                 // Handle initial page load
                 this.update();
-
                 // Handle back and forward button presses
                 var self = this;
                 listen(window, 'popstate', function(e) {
                     self.update();
                 });
             },
-
             /**
              * Updates router to current path
              */
             update: function() {
                 var path = document.location.pathname.replace(settings.doc_root, '');
-
                 if (current_uri !== path) {
                     current_uri = path;
                     prev_route = current_route;
@@ -154,7 +129,6 @@
                 }
                 return this;
             },
-
             /**
              * Checks to see if path is on server, renders 404.
              */
@@ -168,7 +142,6 @@
                     }
                 }
             },
-
             /**
              * Adds event listeners to links which match with registered routes.
              */
@@ -177,7 +150,6 @@
                     href = '',
                     route = {},
                     listens = false;
-
                 for (var i = 0, len = document.links.length; i < len; i++) {
                     href = document.links[i].getAttribute('href');
                     route = this.match(href);
@@ -194,7 +166,6 @@
                     }
                 }
             },
-
             /**
              * Determiness if a link is already being listened to.
              * @param  {Element} link Link to be checked.
@@ -208,7 +179,6 @@
                 }
                 return false;
             },
-
             /**
              * Navigates to and renders link if it's registered.
              * @param  {Element} link Clicked link
@@ -217,18 +187,15 @@
             process: function(link) {
                 var href = link.getAttribute('href'),
                     route = this.match(href);
-
                 if (route) {
                     // Don't reload same route
                     if (href !== current_uri) {
-                        this.set(href)
-                            .update();
+                        this.set(href).update();
                     }
                     return true;
                 }
                 return false;
             },
-
             /**
              * Sets the path to new href.
              * @param {String} href New URI.
@@ -242,93 +209,79 @@
                 }
                 return this;
             },
-
             /**
              * Checks if uri matches with any registered routes and returns match if found or false otherwise.
              * @param  {String} uri URI to compare with routes.
              * @return {Object|Boolean}      Registered route with parameters or didn't match any registered routes.
              */
             match: function(uri) {
-
                 var path = uri.split('/');
-
-                loop:
-                    for (var i = 0, len = routes.length; i < len; i++) {
-                        var registered = routes[i].path.split('/'),
-                            n = registered.length,
-                            params = {};
-
-                        for (var part = 0; part < n; part++) {
-                            if (registered[part].charAt(0) === settings.uri_required_param_indicator) {
-                                // Is required parameter
-                                if (path.length === n) {
-                                    params[registered[part].substring(1)] = fromURI(path[part]);
-                                } else {
-                                    continue loop;
-                                }
-                            } else if (registered[part].charAt(0) === settings.uri_optional_param_indicator) {
-                                // Is optional parameter
-                                params[registered[part].substring(1)] = fromURI(path[part]) || '';
-                            } else if (registered[part] !== path[part]) {
-                                // Doesn't match
+                loop: for (var i = 0, len = routes.length; i < len; i++) {
+                    var registered = routes[i].path.split('/'),
+                        n = registered.length,
+                        params = {};
+                    for (var part = 0; part < n; part++) {
+                        if (registered[part].charAt(0) === settings.uri_required_param_indicator) {
+                            // Is required parameter
+                            if (path.length === n) {
+                                params[registered[part].substring(1)] = fromURI(path[part]);
+                            } else {
                                 continue loop;
                             }
+                        } else if (registered[part].charAt(0) === settings.uri_optional_param_indicator) {
+                            // Is optional parameter
+                            params[registered[part].substring(1)] = fromURI(path[part]) || '';
+                        } else if (registered[part] !== path[part]) {
+                            // Doesn't match
+                            continue loop;
                         }
-
-                        // Loop through GET variables (example.com?variable=value)
-                        var search = document.location.search.substring(1);
-                        if (typeof search !== 'undefined') {
-                            var GET = search.substr(uri.indexOf('?') + 1);
-                            var GET_array = GET.split('&');
-                            for (var g = 0; g < GET_array.length; g++) {
-                                if (GET_array[g].indexOf('=') !== -1) {
-                                    var variable = GET_array[g].split('=');
-                                    params[variable[0]] = variable[1];
-                                }
+                    }
+                    // Loop through GET variables (example.com?variable=value)
+                    var search = document.location.search.substring(1);
+                    if (typeof search !== 'undefined') {
+                        var GET = search.substr(uri.indexOf('?') + 1);
+                        var GET_array = GET.split('&');
+                        for (var g = 0; g < GET_array.length; g++) {
+                            if (GET_array[g].indexOf('=') !== -1) {
+                                var variable = GET_array[g].split('=');
+                                params[variable[0]] = variable[1];
                             }
                         }
-
-                        var match = routes[i];
-                        match['params'] = params;
-                        return match;
                     }
-
+                    var match = routes[i];
+                    match['params'] = params;
+                    return match;
+                }
                 return false;
             },
-
             /**
              * Handles rendering of route.
              * @param  {Object} route Route to be rendered.
              */
             render: function(route) {
-                html.render(route.template, route.force)
-                    .then(function() {
-                        if (typeof route.callback === 'function') {
-                            route.callback.call(shll, route.params);
-                        }
-
-                        if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
-                            prev_route.offload.call(shll, route.params);
-                        }
-
-                        if (typeof route.title === 'string') {
-                            shll.title(route.title);
-                        }
-
-                        if (typeof route.activate === 'string') {
-                            var links = document.querySelectorAll('nav a');
-                            for (var i = 0; i < links.length; i++) {
-                                if (links[i].id === route.activate) {
-                                    links[i].className = 'active';
-                                } else {
-                                    links[i].className = '';
-                                }
+                html.render(route.template, route.force).then(function() {
+                    if (typeof route.callback === 'function') {
+                        route.callback.call(shll, route.params);
+                    }
+                    if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
+                        prev_route.offload.call(shll, route.params);
+                    }
+                    if (typeof route.title === 'string') {
+                        shll.title(route.title);
+                    }
+                    if (typeof route.activate === 'string') {
+                        var links = document.querySelectorAll('nav a');
+                        for (var i = 0; i < links.length; i++) {
+                            if (links[i].id === route.activate) {
+                                links[i].className = 'active';
+                            } else {
+                                links[i].className = '';
                             }
                         }
-                    });
+                    }
+                });
                 return this;
             },
-
             /**
              * Registers new route.
              * @param {String}   route  Route Object
@@ -336,7 +289,6 @@
             add: function(route) {
                 routes.push(route);
             },
-
             /**
              * Set new error route.
              * @param {String}   route  Route Object
@@ -348,7 +300,6 @@
             }
         }
     })();
-
     /**
      * Display content on screen.
      * @type {Object}
@@ -359,7 +310,6 @@
          * @type {String}
          */
         var current = '';
-
         return {
             /**
              * Render template if it's not the current.
@@ -382,7 +332,6 @@
                 }
                 return xhr;
             },
-
             /**
              * Sets content on page.
              * @param {String} html html content to be displayed.
@@ -393,10 +342,15 @@
                 for (var i = 0, len = document.forms.length; i < len; i++) {
                     document.forms[i].action = settings.doc_root + document.forms[i].getAttribute('action');
                 }
+                // fill out csrf tokens
+                var csrf_tokens = document.querySelectorAll('input[name$="csrf_token"]');
+                var csrf_meta = document.querySelectorAll('meta[name$="csrf_token"]')[0];
+                for (var i = 0, len = csrf_tokens.length; i < len; i++) {
+                    csrf_tokens[i].value = csrf_meta.content;
+                }
             }
         }
     })();
-
     /**
      * Makes AJAX calls.
      * @type {Object}
@@ -407,13 +361,11 @@
          * @type {Array}
          */
         var callbacks = [];
-
         /**
          * Private XMLHttpRequest
          * @type {XMLHttpRequest}
          */
         var xhr;
-
         return {
             /**
              * Concatenates parameters into url appropriate string.
@@ -424,7 +376,6 @@
                 var n = Object.keys(params).length,
                     i = 1,
                     string = '?';
-
                 for (var param in params) {
                     if (params.hasOwnProperty(param)) {
                         string += param + '=' + params[param];
@@ -436,7 +387,6 @@
                 }
                 return string;
             },
-
             /**
              * Performs GET request on provided url.
              * @param  {String} url        URL to be called.
@@ -456,7 +406,6 @@
                 };
                 return this;
             },
-
             /**
              * Adds function to list of callbacks fired off when request finished.
              * @param  {Function} callback Callback for request.
@@ -465,7 +414,6 @@
                 callbacks.push(callback);
                 return this;
             },
-
             /**
              * Fires of all callbacks and resets callback Array.
              */
@@ -482,7 +430,6 @@
             }
         };
     };
-
     /**
      * Adds event listener to element.
      * @param  {Element}  el Element to add to.
@@ -500,7 +447,6 @@
             el.addEventListener(ev, fn, false);
         }
     };
-
     /**
      * Encodes string into uri with special characters from settings.
      * @param  {String} string String to be encoded.
@@ -515,7 +461,6 @@
         string = encodeURI(string).replace('?', '%3f').replace('&', '%26');
         return string;
     }
-
     /**
      * Decodes special uri encoded by toURI.
      * @param  {String} uri URI to be decoded
@@ -528,11 +473,9 @@
         uri = decodeURI(uri).replace('%3f', '?').replace('%26', '&');
         return uri;
     }
-
     /////////
     // API //
     /////////
-
     var shll = {
         /**
          * Register a path with html and callback to be rendered when visited.
@@ -554,7 +497,6 @@
             router.add(route);
             return this;
         },
-
         /**
          * Register a path with html and callback to be rendered when 404 error is thrown.
          * @param  {String}   route    Route object
@@ -564,18 +506,15 @@
             router.addErrorRoute('404', route);
             return this;
         },
-
         /**
          * Set url to new href.
          * @param  {String} href New url.
          * @return {shll}        Return self for linking
          */
         navigate: function(href) {
-            router.set(href)
-                .update();
+            router.set(href).update();
             return this;
         },
-
         /**
          * Makes get request.
          * @param  {String} url        URL to be called.
@@ -587,7 +526,6 @@
             xhr.get(settings.doc_root + url, parameters);
             return xhr;
         },
-
         /**
          * Updates router links.
          * @return {shll} Enables callbacks and linking.
@@ -596,7 +534,6 @@
             router.listen();
             return this;
         },
-
         /**
          * Updates router.
          * @return {shll} Enables callbacks and linking.
@@ -605,7 +542,6 @@
             router.update();
             return this;
         },
-
         /**
          * Adds event listener to element.
          * @param  {Element}  element  Node to add event listener to.
@@ -617,7 +553,6 @@
             listen(element, event, callback);
             return this;
         },
-
         /**
          * Returns encoded uri.
          * @param  {String} string String to be encoded.
@@ -626,7 +561,6 @@
         uri: function(string) {
             return toURI(string);
         },
-
         /**
          * Returns decoded uri.
          * @param  {String} uri URI to be decoded.
@@ -635,7 +569,6 @@
         decodeURI: function(uri) {
             return fromURI(uri);
         },
-
         /**
          * Sets the title of the page.
          * @param  {String} title New title
@@ -644,7 +577,6 @@
         title: function(title) {
             document.title = title;
         },
-
         /**
          * Sets the content on the page.
          * @param {String} html Content to be set.
@@ -655,14 +587,11 @@
             return this;
         }
     };
-
     return shll;
 });
-
 ////////////
 // Create //
 ////////////
-
 (function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([], factory(root));
@@ -694,7 +623,6 @@
                     }
                     return this;
                 },
-
                 /**
                  * Appends this element to another.
                  * @param  {Element} node Parent node.
@@ -704,7 +632,6 @@
                     node.appendChild(element);
                     return this;
                 },
-
                 /**
                  * Adds event listener to element.
                  * @param  {String}   event    Event to listen for.
@@ -715,7 +642,6 @@
                     shll.listen(element, event, callback);
                     return this;
                 },
-
                 /**
                  * Adds class to created element
                  * @param {String} class Name of class.
@@ -726,13 +652,10 @@
                     return this;
                 }
             };
-
         if (typeof callback === 'function') {
             callback.call(element);
         }
-
         return functions;
     }
-
     return create;
 });

@@ -15,10 +15,10 @@ define('DB_PASSWORD', '');
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'omega');
 
-require_once '/php/Application.php';
-require_once '/php/User.php';
-require_once '/php/Database.php';
-require_once '/php/Helpers.php';
+require_once 'php/Application.php';
+require_once 'php/User.php';
+require_once 'php/Database.php';
+require_once 'php/Helpers.php';
 
 $uri = strtok($_SERVER["REQUEST_URI"], '?');
 Application::route($uri);

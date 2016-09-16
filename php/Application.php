@@ -31,6 +31,7 @@ class Application
         '/api/js_api'  => 'generate_JS_DOC',
         '/auth/login'  => 'login',
         '/auth/logout' => 'logout',
+        '/auth/register' => 'register',
         '/auth/template' => 'auth_template',
     ];
 
@@ -67,7 +68,7 @@ class Application
     private static function auth_template()
     {
         if(User::loggedIn()) {
-            $path =  getcwd() . '\html\templates' . $_GET['path'];
+            $path =  'html/templates' . $_GET['path'];
             $shll = fopen($path, "r") or die("Unable to open file!");
             // Read content
             $content = fread($shll, filesize($path));
@@ -75,6 +76,21 @@ class Application
         } else {
             print '<h1>Login Required</h1>';
             print '<p>This page requires login.</p>';
+        }
+    }
+
+    /**
+     * Register new user
+     * 
+     */
+    private static function register()
+    {
+        if(User::confirm_csrf($_POST['csrf_token'])) {
+            $username = $_POST['username'];
+            $password = $_POST['password'];
+            if(isset($username) && isset($password)){
+                User::create($username, $password);
+            }
         }
     }
 
@@ -107,7 +123,7 @@ class Application
      */
     private static function generate_JS_DOC()
     {
-        $path = getcwd() . "\js\shll.js";
+        $path = /*ltrim(getcwd(), '/') . */"js/shll.js";
 
         // Open file
         $shll = fopen($path, "r") or die("Unable to open file!");

@@ -54,52 +54,52 @@ Mixins
 *********/
 
 @mixin transition() {
-    transition: all 0.1618s;
+  transition: all 0.1618s;
 }
 
 @mixin border($type) {
-    @if $type=="all" {
-        border: 1px solid #333;
-    }
-    @else if $type=="bottom" {
-        border-bottom: 1px solid #333;
-    }
-    @else if $type=="top" {
-        border-top: 1px solid #333;
-    }
-    @else if $type=="left" {
-        border-left: 1px solid #333;
-    }
-    @else if $type=="right" {
-        border-right: 1px solid #333;
-    }
-    @else if $type=="not-top" {
-        border: 1px solid #333;
-        border-top: none;
-    }
-    @else if $type=="not-bottom" {
-        border: 1px solid #333;
-        border-bottom: none;
-    }
-    @else if $type=="not-right" {
-        border: 1px solid #333;
-        border-right: none;
-    }
-    @else if $type=="top-bottom" {
-        border: 1px solid #333;
-        border-left: none;
-        border-right: none;
-    }
-    @else if $type=="left-right" {
-        border: 1px solid #333;
-        border-top: none;
-        border-bottom: none;
-    }
-    @else if $type=="sides" {
-        border: 1px solid #333;
-        border-top: none;
-        border-bottom: none;
-    }
+  @if $type=="all" {
+    border: 1px solid #333;
+  }
+  @else if $type=="bottom" {
+    border-bottom: 1px solid #333;
+  }
+  @else if $type=="top" {
+    border-top: 1px solid #333;
+  }
+  @else if $type=="left" {
+    border-left: 1px solid #333;
+  }
+  @else if $type=="right" {
+    border-right: 1px solid #333;
+  }
+  @else if $type=="not-top" {
+    border: 1px solid #333;
+    border-top: none;
+  }
+  @else if $type=="not-bottom" {
+    border: 1px solid #333;
+    border-bottom: none;
+  }
+  @else if $type=="not-right" {
+    border: 1px solid #333;
+    border-right: none;
+  }
+  @else if $type=="top-bottom" {
+    border: 1px solid #333;
+    border-left: none;
+    border-right: none;
+  }
+  @else if $type=="left-right" {
+    border: 1px solid #333;
+    border-top: none;
+    border-bottom: none;
+  }
+  @else if $type=="sides" {
+    border: 1px solid #333;
+    border-top: none;
+    border-bottom: none;
+  }
 }
 
 
@@ -116,20 +116,22 @@ Body, html, *
 ::::::::::
 *********/
 
-html, input, button {
-    font-family: inherit;
-    font-size: 16px;
-    line-height: 1.618;
+html,
+input,
+button {
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.618;
 }
 
 body {
-    margin: 0;
-    padding-top: $header-height;
-    overflow-y: scroll;
+  margin: 0;
+  padding-top: $header-height;
+  overflow-y: scroll;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 
@@ -141,66 +143,103 @@ Wraps & Containers
 
 // Top container
 .wrap {
-    max-width: $max-width;
-    margin: 0 auto;
-    margin-bottom: $h;
-    padding-bottom: $h;
-    @include border("not-top");
+  max-width: $max-width;
+  margin: 0 auto;
+  margin-bottom: $h;
+  padding-bottom: $h;
+  @include border("not-top");
 }
 
 // Column layout
 .layout {
-    // Keep element from collapsing, without overflow:hidden;
-    &:before, &:after {
-        content: "";
-        display: table;
-    }
-    &:after {
-        clear: both;
-    }
-    // All columns float
-    & > * {
-        display: block;
-        float: left;
-    }
-    & .sixteenth, & ._6 {
-        width: 6.25%;
-    }
-    & .tenth, & ._10 {
-        width: 10%;
-    }
-    & .eighth, & ._12 {
-        width: 12.5%;
-    }
-    & .fifth, & ._20 {
-        width: 20%;
-    }
-    & .fourth, & ._25 {
-        width: 25%;
-    }
-    & .third, & ._33 {
-        width: (100% / 3);
-    }
-    & .half, & ._50 {
-        width: 50%;
-    }
-    & .two-thirds, & ._66 {
-        width: (100% / 3) * 2;
-    }
-    & .three-fourths, & ._75 {
-        width: 75%;
-    }
-    & .four-fifths, & ._80 {
-        width: 80%;
-    }
-    & .nine-tenths, & ._90 {
-        width: 90%;
-    }
-    & .full, & ._100 {
-        width: 100%;
-    }
+  // Keep element from collapsing, without overflow:hidden;
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+  // All columns float
+  & > * {
+    display: block;
+    float: left;
+  }
+  & .sixteenth,
+  & ._6 {
+    width: 6.25%;
+  }
+  & .tenth,
+  & ._10 {
+    width: 10%;
+  }
+  & .eighth,
+  & ._12 {
+    width: 12.5%;
+  }
+  & .fifth,
+  & ._20 {
+    width: 20%;
+  }
+  & .fourth,
+  & ._25 {
+    width: 25%;
+  }
+  & .third,
+  & ._33 {
+    width: (100% / 3);
+  }
+  & .half,
+  & ._50 {
+    width: 50%;
+  }
+  & .two-thirds,
+  & ._66 {
+    width: (100% / 3) * 2;
+  }
+  & .three-fourths,
+  & ._75 {
+    width: 75%;
+  }
+  & .four-fifths,
+  & ._80 {
+    width: 80%;
+  }
+  & .nine-tenths,
+  & ._90 {
+    width: 90%;
+  }
+  & .full,
+  & ._100 {
+    width: 100%;
+  }
 }
 
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10%, 90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.message {
+  position: fixed;
+  z-index: -1;
+  opacity: 0;
+  right: 16px;
+  top: 16px;
+  width: 256px;
+  padding: $a;
+  color: $green;
+  background: #444;
+  animation: fadeInOut 4s; 
+}
 
 /*********
 ::::::::::
@@ -209,30 +248,32 @@ Misc
 *********/
 
 .padding {
-    padding: 0 $h;
+  padding: 0 $h;
 }
 
 .padding-right {
-    padding-right: $a;
+  padding-right: $a;
 }
 
 .padding-left {
-    padding-left: $a;
+  padding-left: $a;
 }
 
 ::-webkit-scrollbar {
-    @include border("left");
+  background: white;
 }
 
-::-webkit-scrollbar-button:vertical:increment, ::-webkit-scrollbar-button:vertical:decrement {
-    display: none;
+::-webkit-scrollbar-button:vertical:increment,
+::-webkit-scrollbar-button:vertical:decrement {
+  display: none;
 }
 
-::-webkit-scrollbar-track {}
+::-webkit-scrollbar-track {
+  background: white;
+}
 
 ::-webkit-scrollbar-thumb {
-    background: $grey;
-    @include border("not-right");
+  background: $black;
 }
 
 
@@ -243,64 +284,64 @@ Navigation
 *********/
 
 nav {
-    top: 0;
-    position: fixed;
-    width: 100%;
-    & .nav_links {
-        max-width: $max-width;
-        position: relative;
-        margin: 0 auto;
-        height: $header-height;
-        background: white;
-        text-align: center;
-        @include border("not-top");
+  top: 0;
+  position: fixed;
+  width: 100%;
+  & .nav_links {
+    max-width: $max-width;
+    position: relative;
+    margin: 0 auto;
+    height: $header-height;
+    background: white;
+    text-align: center;
+    @include border("not-top");
+  }
+  & a {
+    width: auto;
+    min-width: 96px;
+    padding: 0 24px;
+    display: block;
+    float: left;
+    color: $black;
+    font-size: 14px;
+    line-height: $header-height - 1;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    position: relative;
+    @include transition();
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0px;
+      right: 0px;
+      top: 0px;
+      bottom: 0px;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      @include transition();
     }
-    & a {
-        width: auto;
-        min-width: 96px;
-        padding: 0 24px;
-        display: block;
-        float: left;
-        color: $black;
-        font-size: 14px;
-        line-height: $header-height - 1;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        text-decoration: none;
-        position: relative;
-        @include transition();
-        &::after {
-            content: '';
-            position: absolute;
-            left: 0px;
-            right: 0px;
-            top: 0px;
-            bottom: 0px;
-            border: 1px solid transparent;
-            box-sizing: border-box;
-            @include transition();
-        }
-        &:hover {}
-        &:hover::after {
-            left: 8px;
-            right: 8px;
-            top: 8px;
-            bottom: 8px;
-            border-color: $blue;
-        }
-        &:active {}
-        &:active::after {
-            left: 12px;
-            right: 12px;
-            top: 12px;
-            bottom: 12px;
-        }
-        &.active {
-            background: white;
-            color: $blue;
-        }
-        &.active::after {}
+    &:hover {}
+    &:hover::after {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      bottom: 8px;
+      border-color: $blue;
     }
+    &:active {}
+    &:active::after {
+      left: 12px;
+      right: 12px;
+      top: 12px;
+      bottom: 12px;
+    }
+    &.active {
+      background: white;
+      color: $blue;
+    }
+    &.active::after {}
+  }
 }
 
 
@@ -310,33 +351,37 @@ Text
 ::::::::::
 *********/
 
-h1, h2, h3 {
-    margin: 0;
-    line-height: $h;
-    padding-left: $h;
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: $h;
+  padding-left: $h;
 }
 
 h1 {
-    color: $background;
-    font-size: 1.5em;
-    line-height: $h * 2;
-    background: $border-color;
+  color: $background;
+  font-size: 1.5em;
+  line-height: $h * 2;
+  background: $border-color;
 }
 
 h3 {
-    line-height: $h * 2 - 1;
-    @include border("top");
+  line-height: $h * 2 - 1;
+  @include border("top");
 }
 
 p {
-    width: 100%;
-    margin: 0;
-    padding: 0 $h;
-    line-height: $h;
+  width: 100%;
+  margin: 0;
+  padding: 0 $h;
+  line-height: $h;
 }
 
-h2, h3, p {
-    margin-top: $h;
+h2,
+h3,
+p {
+  margin-top: $h;
 }
 
 
@@ -347,44 +392,46 @@ Forms
 *********/
 
 form {
-    padding: 0 $h;
-    margin-bottom: 0;
+  padding: 0 $h;
+  margin-bottom: 0;
 }
 
 label {
-    margin-top: $h;
-    padding-left: $a / 2;
-    display: block;
-    font-style: italic;
-    line-height: $a * 2;
-    letter-spacing: 0.02em;
+  margin-top: $h;
+  padding-left: $a / 2;
+  display: block;
+  font-style: italic;
+  line-height: $a * 2;
+  letter-spacing: 0.02em;
 }
 
-input, button {
-    width: 100%;
-    height: $a * 2;
-    padding: 0 $a / 2 - 1;
-    outline: none;
-    display: block;
-    @include border("all");
-    &:focus {
-        border-color: $dark-green;
-    }
+input,
+button {
+  width: 100%;
+  height: $a * 2;
+  padding: 0 $a / 2 - 1;
+  outline: none;
+  display: block;
+  @include border("all");
+  &:focus {
+    border-color: $dark-green;
+  }
 }
 
-input[type="submit"], button {
-    width: auto;
-    padding: 0 $a;
-    display: inline-block;
-    background: $background;
-    &:active {
-        border-color: $dark-grey;
-        background: $light-grey;
-    }
+input[type="submit"],
+button {
+  width: auto;
+  padding: 0 $a;
+  display: inline-block;
+  background: $background;
+  &:active {
+    border-color: $dark-grey;
+    background: $light-grey;
+  }
 }
 
 .btn-group {
-    margin-top: $h;
+  margin-top: $h;
 }
 
 
@@ -394,49 +441,50 @@ Other elements
 ::::::::::
 *********/
 
-ul, ol {
-    margin: 0;
-    margin-top: $h;
-    padding-left: $h * 2;
+ul,
+ol {
+  margin: 0;
+  margin-top: $h;
+  padding-left: $h * 2;
 }
 
 li {
-    min-height: $h;
+  min-height: $h;
 }
 
 table {
-    width: 100%;
-    max-width: 22 * $h;
-    margin: $h;
-    margin-bottom: 0;
-    font-size: inherit;
-    box-sizing: border-box;
-    border-collapse: collapse;
-    @include border("not-bottom");
+  width: 100%;
+  max-width: 22 * $h;
+  margin: $h;
+  margin-bottom: 0;
+  font-size: inherit;
+  box-sizing: border-box;
+  border-collapse: collapse;
+  @include border("not-bottom");
 }
 
 th {
-    padding: 0;
-    line-height: $h - 2;
-    @include border("bottom");
+  padding: 0;
+  line-height: $h - 2;
+  @include border("bottom");
 }
 
 tr {
-    @include border("bottom");
+  @include border("bottom");
 }
 
 tr:nth-child(even) {
-    // background: $light-grey;
+  // background: $light-grey;
 }
 
 td {
-    padding: 0 $a / 2;
-    min-width: $h * 4 - $a + 1;
-    line-height: $h - 1;
+  padding: 0 $a / 2;
+  min-width: $h * 4 - $a + 1;
+  line-height: $h - 1;
 }
 
 td:not(:last-child) {
-    @include border("right");
+  @include border("right");
 }
 
 
@@ -447,28 +495,28 @@ Page specific rules
 *********/
 
 .api_function {
-    padding-top: $a;
-    padding-bottom: $h;
-    font-family: monospace;
-    border-bottom: 1px solid $dark-grey;
-    & code {
-        margin: $a;
-        font-size: 18px;
-        font-style: italic;
-    }
-    & table {
-        width: auto;
-        border: none;
-    }
-    & td {
-        border: none;
-    }
-    & tr:last-child {
-        border: none;
-    }
+  padding-top: $a;
+  padding-bottom: $h;
+  font-family: monospace;
+  border-bottom: 1px solid $dark-grey;
+  & code {
+    margin: $a;
+    font-size: 18px;
+    font-style: italic;
+  }
+  & table {
+    width: auto;
+    border: none;
+  }
+  & td {
+    border: none;
+  }
+  & tr:last-child {
+    border: none;
+  }
 }
 
 #load_posts {
-    width: 100%;
-    height: $h * 2 - 2;
+  width: 100%;
+  height: $h * 2 - 2;
 }
