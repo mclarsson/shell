@@ -42,6 +42,7 @@
         <script src="js/polyfill.js"></script>
         <script src="js/shll.js"></script>
         <script src="js/main.js"></script>
+        <script src="js/postController.js"></script>
 
         <!-- handle js disabled -->
         <noscript>

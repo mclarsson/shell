@@ -55,7 +55,17 @@
              * Character to replace uri_space_replacement if present.
              * @type {String}
              */
-            uri_space_standin: '_'
+            uri_space_standin: '_',
+            /**
+             * URI to template api call.
+             * @type {String}
+             */
+            template_uri: '/api/template',
+            /**
+             * URI to authenticated template api call.
+             * @type {String}
+             */
+            auth_template_uri: '/auth/template'
         };
         router.init();
     };
@@ -259,7 +269,9 @@
              * @param  {Object} route Route to be rendered.
              */
             render: function(route) {
-                html.render(route.template, route.force).then(function() {
+                var route = route;
+
+                var render_callback = function() {
                     if (typeof route.callback === 'function') {
                         route.callback.call(shll, route.params);
                     }
@@ -279,7 +291,20 @@
                             }
                         }
                     }
-                });
+                }
+                
+                if (typeof route.template === 'string') {
+                    html.render(route.template, route.force)
+                        .then(render_callback);
+                } else if (typeof route.auth_template === 'string') {
+                    var xhr = new http();
+                    xhr.get(settings.doc_root + settings.auth_template_uri, {
+                        path: route.auth_template
+                    }).then(function(response){
+                        html.set(response);
+                        render_callback();
+                    });
+                }
                 return this;
             },
             /**
@@ -325,7 +350,10 @@
                     xhr.unload();
                 } else {
                     var self = this;
-                    xhr.get(settings.doc_root + file).then(function(response) {
+
+                    xhr.get(settings.doc_root + settings.template_uri, {
+                        path: file
+                    }).then(function(response){
                         current = file;
                         self.set(response);
                     });
@@ -482,16 +510,17 @@
          * @param  {String}   route    Route object
          * @return {shll}              Return self for linking
          */
-        when: function(route) {
+        route: function(route) {
             /*
             Route Object
             {
-                path:       URI to look for,
-                title:      Title which will be set on render, 
-                template:   Path to html template to be rendered,
-                callback:   Function to be fired off when page has been rendered,
-                offload:    Function to be called when exiting route,
-                force:      Force reload of template
+                path:           URI to look for,
+                title:          Title which will be set on render, 
+                template:       Path to html template to be rendered,
+                auth_template:  Path to html template to be rendered (login required),
+                callback:       Function to be fired off when page has been rendered,
+                offload:        Function to be called when exiting route,
+                force:          Force reload of template
             }
              */
             router.add(route);

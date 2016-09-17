@@ -2,102 +2,10 @@ function log(s) {
     console.log(s);
 }
 (function() {
-    /**
-     * Controller for posts
-     */
-    var postController = (function() {
-        var pages = [];
-        var page_length = 30;
-        var initial_load = true;
-        return {
-            update: function(page) {
-                page = page === '' ? 1 : +page;
-                var from, to;
-                if (!initial_load && page !== 1 && page === pages.length + 1) {
-                    // next page
-                    from = (page - 1) * page_length;
-                    to = page_length;
-                } else {
-                    // previous page or new load
-                    document.getElementById('posts').innerHTML = '';
-                    pages = [];
-                    from = 0;
-                    to = page * page_length;
-                }
-                this.get(from, to);
-                if (initial_load) {
-                    shll.listen(document.getElementById('load_posts'), 'click', function() {
-                        postController.next();
-                    });
-                    initial_load = false;
-                }
-            },
-            reset: function() {
-                pages = [];
-                initial_load = true;
-            },
-            next: function() {
-                shll.navigate('/blogg/' + (pages.length + 1));
-            },
-            /**
-             * Fetches posts.
-             */
-            get: function(start, count) {
-                shll.get('/api/get', {
-                    from: start,
-                    to: count
-                }).then(function(response) {
-                    var content = JSON.parse(response),
-                        ul = document.getElementById('posts'),
-                        len = content.length;
-                    // Holder for new page.
-                    var page = [];
-                    for (var i = 0; i < len; i++) {
-                        page.push(content[i]);
-                        if (page.length === page_length) {
-                            // Page finished, create new
-                            pages.push(page);
-                            page = [];
-                        } else if (page.length === 1) {
-                            // New page, add page number
-                            create('li', function() {
-                                var string = 'Page ' + (pages.length + 1);
-                                this.innerHTML = string;
-                            }).addClass('page-number').appendTo(ul);
-                        }
-                        create('li').append('a', function() {
-                            this.href = '/article/' + shll.uri(content[i]['title']);
-                            this.appendChild(document.createTextNode(content[i]['title']));
-                        }).appendTo(ul);
-                    }
-                });
-            },
-            /**
-             * Finds specific post.
-             * @param  {String} title Title of post.
-             * @param  {String} id    Id of post.
-             */
-            find: function(title, id) {
-                shll.get('/api/find', {
-                    title: encodeURIComponent(title),
-                    id: id
-                }).then(function(response) {
-                    var post = JSON.parse(response)[0];
-                    if (post) {
-                        document.getElementById('post').innerHTML = '';
-                        document.getElementById('post').innerHTML += '<h1>' + post.title + '</h1>';
-                        document.getElementById('post').innerHTML += '<div class="post-text">' + post.text.substring(0) + '</div>';
-                    } else {
-                        document.getElementById('post').innerHTML = '<i>The post you are looking for doesn\'t exist...</i>';
-                    }
-                });
-            }
-        }
-    })();
     /////////////////
     // Application //
     /////////////////
-    shll.when({
+    shll.route({
             path: '/',
             title: 'shll',
             activate: 'home',
@@ -107,7 +15,7 @@ function log(s) {
                     document.getElementById('api').innerHTML += response;
                 });
             }
-        }).when({
+        }).route({
             path: '/blogg/?page',
             title: 'shll | blogg',
             activate: 'blogg',
@@ -118,49 +26,33 @@ function log(s) {
             offload: function() {
                 postController.reset();
             }
-        }).when({
+        }).route({
             path: '/article/&title',
             activate: 'blogg',
             template: '/html/templates/article.html',
             callback: function(params) {
                 shll.title('shll | ' + params.title);
                 postController.find(params.title);
-                document.body.className = "clean";
-            },
-            offload: function() {
-                document.body.className = "";
             }
         })
         /*
             AUTH
          */
-        .when({
+        .route({
             path: '/login',
             title: 'shll | login',
             activate: 'login',
             template: '/html/templates/login.html'
-        }).when({
+        }).route({
             path: '/admin',
             title: 'shll | admin',
             activate: 'admin',
-            template: '/html/templates/home.html',
-            callback: function(params) {
-                shll.get('/auth/template', {
-                    path: '/auth/admin.html'
-                }).then(function(response) {
-                    shll.setContent(response);
-                });
-            }
-        }).when({
+            auth_template: '/html/templates/auth/admin.html'
+        }).route({
             path: '/register',
-            template: '/html/templates/home.html',
-            callback: function(params) {
-                shll.get('/auth/template', {
-                    path: '/auth/register.html'
-                }).then(function(response) {
-                    shll.setContent(response);
-                });
-            }
+            title: 'shll | register',
+            activate: 'admin',
+            auth_template: '/html/templates/auth/register.html'
         })
         /*
             ERROR

@@ -25,12 +25,13 @@ class Application
 
     // Routes handled by php, these will not be available to angular.
     private static $routes = [
-        '/api/get'     => 'getPosts',
-        '/api/find'    => 'findPost',
-        '/api/search'  => 'searchPosts',
-        '/api/js_api'  => 'generate_JS_DOC',
-        '/auth/login'  => 'login',
-        '/auth/logout' => 'logout',
+        '/api/get'       => 'getPosts',
+        '/api/template'  => 'renderTemplate',
+        '/api/find'      => 'findPost',
+        '/api/search'    => 'searchPosts',
+        '/api/js_api'    => 'generate_JS_DOC',
+        '/auth/login'    => 'login',
+        '/auth/logout'   => 'logout',
         '/auth/register' => 'register',
         '/auth/template' => 'auth_template',
     ];
@@ -60,35 +61,52 @@ class Application
         redirect('/');
         exit();
     }
-    
+
+    /**
+     * Prints template if path does not contain auth.
+     * @return String Template.
+     */
+    private static function renderTemplate()
+    {
+        if (strpos($_GET['path'], 'auth') === false) {
+            $path = ltrim($_GET['path'], '/');
+            $file = fopen($path, "r") or die("Unable to open file!");
+            // Read content
+            $content = fread($file, filesize($path));
+            print $content;
+        } else {
+            self::auth_template();
+        }
+    }
+
     /**
      * Prints template if logged in.
      * @return String Template.
      */
     private static function auth_template()
     {
-        if(User::loggedIn()) {
-            $path =  'html/templates' . $_GET['path'];
-            $shll = fopen($path, "r") or die("Unable to open file!");
+        if (User::loggedIn()) {
+            $path = ltrim($_GET['path'], '/');
+            $file = fopen($path, "r") or die("Unable to open file!");
             // Read content
-            $content = fread($shll, filesize($path));
+            $content = fread($file, filesize($path));
             print $content;
         } else {
             print '<h1>Login Required</h1>';
-            print '<p>This page requires login.</p>';
+            print '<p>This page requires <a href="login">login</a>.</p>';
         }
     }
 
     /**
      * Register new user
-     * 
+     *
      */
     private static function register()
     {
-        if(User::confirm_csrf($_POST['csrf_token'])) {
+        if (User::confirm_csrf($_POST['csrf_token'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
-            if(isset($username) && isset($password)){
+            if (isset($username) && isset($password)) {
                 User::create($username, $password);
             }
         }
