@@ -13,3 +13,8 @@ function redirect($to)
     }
     header('Location: ' . $location);
 }
+
+function message($text, $type)
+{
+	echo '<span class="'.$type.'">'.$text.'</span>';
+}

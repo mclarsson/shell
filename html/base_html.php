@@ -79,6 +79,8 @@
             </div>
         </nav>
 
+        <div id="message-board"></div>
+
         <div class="wrap">
             <div id="content"></div>
         </div>

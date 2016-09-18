@@ -133,6 +133,5 @@ class User
         $password = self::hash($password);
         $sql = "INSERT INTO users (username, password) VALUES (?, ?)";
         DB::query($sql, 'ss', [$username, $password]);
-        redirect('/admin'); 
     }
 }

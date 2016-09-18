@@ -33,7 +33,7 @@ class Application
         '/auth/login'    => 'login',
         '/auth/logout'   => 'logout',
         '/auth/register' => 'register',
-        '/auth/template' => 'auth_template',
+        '/auth/template' => 'auth_template'
     ];
 
     /**
@@ -106,9 +106,14 @@ class Application
         if (User::confirm_csrf($_POST['csrf_token'])) {
             $username = $_POST['username'];
             $password = $_POST['password'];
-            if (isset($username) && isset($password)) {
+            if ($username != '' && $password != '') {
                 User::create($username, $password);
+                message('Admin created', 'success');
+            } else {
+                message('Username or password not set', 'error');
             }
+        } else {
+            message('CSRF tokens doesn\'t match', 'error');
         }
     }
 

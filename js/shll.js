@@ -292,7 +292,7 @@
                         }
                     }
                 }
-                
+
                 if (typeof route.template === 'string') {
                     html.render(route.template, route.force)
                         .then(render_callback);
@@ -300,7 +300,7 @@
                     var xhr = new http();
                     xhr.get(settings.doc_root + settings.auth_template_uri, {
                         path: route.auth_template
-                    }).then(function(response){
+                    }).then(function(response) {
                         html.set(response);
                         render_callback();
                     });
@@ -353,7 +353,7 @@
 
                     xhr.get(settings.doc_root + settings.template_uri, {
                         path: file
-                    }).then(function(response){
+                    }).then(function(response) {
                         current = file;
                         self.set(response);
                     });
@@ -372,9 +372,39 @@
                 }
                 // fill out csrf tokens
                 var csrf_tokens = document.querySelectorAll('input[name$="csrf_token"]');
-                var csrf_meta = document.querySelectorAll('meta[name$="csrf_token"]')[0];
+                var csrf_meta = document.querySelector('meta[name$="csrf_token"]');
                 for (var i = 0, len = csrf_tokens.length; i < len; i++) {
                     csrf_tokens[i].value = csrf_meta.content;
+                }
+
+                // Listen to async post forms
+                var forms = document.querySelectorAll('[async_form]');
+                for (var i = 0, len = forms.length; i < len; i++) {
+                    (function() {
+                        var form = forms[i];
+                        var uri = form.getAttribute('uri');
+                        var method = form.getAttribute('method');
+                        var submit = form.querySelector('input[type=submit]');
+
+                        listen(submit, 'click', function() {
+                            var inputs = form.querySelectorAll('input:not([type=submit]), textarea');
+                            var parameters = {};
+                            for (var j = 0, inp = inputs.length; j < inp; j++) {
+                                parameters[inputs[j].name] = inputs[j].value;
+                            }
+                            if (method === 'get') {
+                                shll.get(uri, parameters)
+                                    .then(function(response) {
+                                        displayMessage(response);
+                                    });
+                            } else if (method === 'post') {
+                                shll.post(uri, parameters)
+                                    .then(function(response) {
+                                        displayMessage(response);
+                                    });
+                            }
+                        });
+                    })();
                 }
             }
         }
@@ -435,6 +465,28 @@
                 return this;
             },
             /**
+             * Performs POST request on provided url.
+             * @param  {String} url        URL to be called.
+             * @param  {Object} parameters Parameters to send along with url.
+             * @return {http}              Self.
+             */
+            post: function(url, parameters) {
+                var self = this;
+                if (parameters) {
+                    // Remove ? from beginning of parameters
+                    parameters = this.encodeParams(parameters).substring(1);
+                }
+                xhr = new XMLHttpRequest();
+
+                xhr.open('POST', encodeURI(url), true);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send(parameters);
+                xhr.onload = function() {
+                    self.unload(this.response);
+                };
+                return this;
+            },
+            /**
              * Adds function to list of callbacks fired off when request finished.
              * @param  {Function} callback Callback for request.
              */
@@ -474,6 +526,17 @@
         } else {
             el.addEventListener(ev, fn, false);
         }
+    };
+
+    function displayMessage(message) {
+        var board = document.getElementById('message-board');
+        var div = document.createElement('div');
+        div.className = 'message';
+        div.innerHTML = message;
+        board.appendChild(div);
+        window.setTimeout(function(){
+            div.remove();
+        }, 4000);
     };
     /**
      * Encodes string into uri with special characters from settings.
@@ -545,7 +608,7 @@
             return this;
         },
         /**
-         * Makes get request.
+         * Makes GET request.
          * @param  {String} url        URL to be called.
          * @param  {Object} parameters Parameters to send along with url.
          * @return {http}              Enables callbacks and chaining.
@@ -553,6 +616,17 @@
         get: function(url, parameters) {
             var xhr = new http();
             xhr.get(settings.doc_root + url, parameters);
+            return xhr;
+        },
+        /**
+         * Makes POST request.
+         * @param  {String} url        URL to be called.
+         * @param  {Object} parameters Parameters to send along with url.
+         * @return {http}              Enables callbacks and chaining.
+         */
+        post: function(url, parameters) {
+            var xhr = new http();
+            xhr.post(settings.doc_root + url, parameters);
             return xhr;
         },
         /**

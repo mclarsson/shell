@@ -228,17 +228,26 @@ Wraps & Containers
   }
 }
 
-.message {
+#message-board {
   position: fixed;
-  z-index: -1;
+  right: 0;
+  top: 0;
+}
+
+.message {
   opacity: 0;
-  right: 16px;
-  top: 16px;
+  margin: 16px;
   width: 256px;
   padding: $a;
   color: $green;
   background: #444;
   animation: fadeInOut 4s; 
+  & .success {
+    color: $green;
+  }
+  & .error {
+    color: $red;
+  }
 }
 
 /*********
@@ -261,6 +270,7 @@ Misc
 
 ::-webkit-scrollbar {
   background: white;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-button:vertical:increment,
@@ -364,6 +374,9 @@ h1 {
   font-size: 1.5em;
   line-height: $h * 2;
   background: $border-color;
+  & a {
+    color: inherit;
+  }
 }
 
 h3 {
@@ -391,7 +404,7 @@ Forms
 ::::::::::
 *********/
 
-form {
+form, .form {
   padding: 0 $h;
   margin-bottom: 0;
 }
