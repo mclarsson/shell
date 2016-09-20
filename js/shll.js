@@ -269,42 +269,34 @@
              * @param  {Object} route Route to be rendered.
              */
             render: function(route) {
-                var route = route;
 
-                var render_callback = function() {
-                    if (typeof route.callback === 'function') {
-                        route.callback.call(shll, route.params);
-                    }
-                    if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
-                        prev_route.offload.call(shll, route.params);
-                    }
-                    if (typeof route.title === 'string') {
-                        shll.title(route.title);
-                    }
-                    if (typeof route.activate === 'string') {
-                        var links = document.querySelectorAll('nav a');
-                        for (var i = 0; i < links.length; i++) {
-                            if (links[i].id === route.activate) {
-                                links[i].className = 'active';
-                            } else {
-                                links[i].className = '';
-                            }
+                var auth = typeof route.template === 'string' ? false : typeof route.auth_template === 'string' ? true : false;
+                var file = route.template || route.auth_template;
+
+                if (typeof route.title === 'string') {
+                    shll.title(route.title);
+                }
+                if (typeof route.activate === 'string') {
+                    var links = document.querySelectorAll('nav a');
+                    for (var i = 0; i < links.length; i++) {
+                        if (links[i].id === route.activate) {
+                            links[i].className = 'active';
+                        } else {
+                            links[i].className = '';
                         }
                     }
                 }
-
-                if (typeof route.template === 'string') {
-                    html.render(route.template, route.force)
-                        .then(render_callback);
-                } else if (typeof route.auth_template === 'string') {
-                    var xhr = new http();
-                    xhr.get(settings.doc_root + settings.auth_template_uri, {
-                        path: route.auth_template
-                    }).then(function(response) {
-                        html.set(response);
-                        render_callback();
+                
+                html.render(file, route.force, auth)
+                    .then(function() {
+                        if (typeof route.callback === 'function') {
+                            route.callback.call(shll, route.params);
+                        }
+                        if (typeof prev_route.offload === 'function' && prev_route.path !== route.path) {
+                            prev_route.offload.call(shll, route.params);
+                        }
                     });
-                }
+
                 return this;
             },
             /**
@@ -340,9 +332,10 @@
              * Render template if it's not the current.
              * @param  {String} file path to template to be rendered.
              * @param  {Boolean} force load new template despite it being current.
+             * @param  {Boolean} auth Template requires login.
              * @return {http}        Enables more callbacks to be added.
              */
-            render: function(file, force) {
+            render: function(file, force, auth) {
                 var xhr = new http();
                 // Don't render same template again
                 if (current === file && !force) {
@@ -350,8 +343,8 @@
                     xhr.unload();
                 } else {
                     var self = this;
-
-                    xhr.get(settings.doc_root + settings.template_uri, {
+                    var uri = auth === true ? settings.doc_root + settings.auth_template_uri : settings.doc_root + settings.template_uri;
+                    xhr.get(uri, {
                         path: file
                     }).then(function(response) {
                         current = file;
@@ -534,7 +527,7 @@
         div.className = 'message';
         div.innerHTML = message;
         board.appendChild(div);
-        window.setTimeout(function(){
+        window.setTimeout(function() {
             div.remove();
         }, 4000);
     };

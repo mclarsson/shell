@@ -9,12 +9,7 @@ function log(s) {
             path: '/',
             title: 'shll',
             activate: 'home',
-            template: '/html/templates/home.html',
-            callback: function() {
-                shll.get('/api/js_api').then(function(response) {
-                    document.getElementById('api').innerHTML += response;
-                });
-            }
+            template: '/html/templates/home.html'
         }).route({
             path: '/blogg/?page',
             title: 'shll | blogg',

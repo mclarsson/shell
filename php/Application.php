@@ -29,7 +29,6 @@ class Application
         '/api/template'  => 'renderTemplate',
         '/api/find'      => 'findPost',
         '/api/search'    => 'searchPosts',
-        '/api/js_api'    => 'generate_JS_DOC',
         '/auth/login'    => 'login',
         '/auth/logout'   => 'logout',
         '/auth/register' => 'register',
@@ -138,77 +137,5 @@ class Application
         $id    = isset($_GET['id']) ? $_GET['id'] : -1;
         $sql   = "SELECT * FROM posts WHERE title = ? OR id = ?";
         DB::respond($sql, 'si', [$title, $id]);
-    }
-
-    /**
-     * Reads shll.js and echoes api based on documentation.
-     * @return [type] [description]
-     */
-    private static function generate_JS_DOC()
-    {
-        $path = /*ltrim(getcwd(), '/') . */"js/shll.js";
-
-        // Open file
-        $shll = fopen($path, "r") or die("Unable to open file!");
-        // Read content
-        $content = fread($shll, filesize($path));
-        // Only get api part
-        $start   = strpos($content, 'var shll = {');
-        $content = substr($content, $start);
-        // Turn into array
-        $pieces = explode('/**', $content);
-        // Loop array
-        foreach ($pieces as $piece) {
-            if ($piece != '' && trim($piece) != 'var shll = {' && !strpos($piece, 'var create =')) {
-                $start = strpos($piece, ': function(');
-                $piece = substr($piece, 0, $start);
-                $piece = trim($piece);
-
-                // Extract parts
-                $name = trim(substr($piece, strpos($piece, '*/') + 2));
-                $info = explode('*', substr($piece, 0, strpos($piece, '*/')));
-                unset($info[0]);
-                $description = array_shift($info);
-
-                echo '<div class="api_function">';
-                echo '<code>.' . $name . '</code>';
-                echo '<p class="description">' . $description . '</p>';
-                echo '<table>';
-                foreach ($info as $line) {
-                    echo '<tr>';
-                    if ($line != '') {
-                        if (strpos($line, '@param')) {
-                            $line = substr($line, 7);
-                            $type = substr($line, strpos($line, '{') + 1, strpos($line, '}') - 3);
-                            $line = substr($line, strpos($line, '}') + 1);
-                            $rest = explode(' ', trim($line), 2);
-                            $name = trim(array_shift($rest));
-                            $desc = trim(array_shift($rest));
-
-                            echo '<td><b>' . $type . '</b></td>';
-                            echo '<td><i>' . $name . '</i></td>';
-                            echo '<td>' . $desc . '</td>';
-                        } else if (strpos($line, '@return')) {
-                            $line = substr($line, 7);
-                            $type = substr($line, strpos($line, '{') + 1, strpos($line, '}') - 3);
-                            $desc = substr($line, strpos($line, '}') + 1);
-
-                            echo '<td><b>return</b></td>';
-                            echo '<td><i>' . $type . '</i></td>';
-                            echo '<td>' . $desc . '</td>';
-                        }
-                    }
-                    echo '</tr>';
-                }
-                echo '</table>';
-                echo '</div>';
-            } else if (trim($piece) == 'var shll = {') {
-                echo '<h3>shll</h3>';
-            } else if (strpos($piece, 'var create =')) {
-                echo '<h3>create</h3>';
-            }
-        }
-
-        fclose($shll);
     }
 }
