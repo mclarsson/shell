@@ -115,7 +115,7 @@ class User
     {
         if (!isset($_SESSION)) {
             session_start();
-        }
+        }   
         return $token == $_SESSION['csrf_token'];
     }
 

@@ -15,7 +15,7 @@
                     to = page_length;
                 } else {
                     // previous page or new load
-                    document.getElementById('posts').innerHTML = '';
+                    document.getElementById('post_wrap').innerHTML = '';
                     pages = [];
                     from = 0;
                     to = page * page_length;
@@ -44,7 +44,7 @@
                     to: count
                 }).then(function(response) {
                     var content = JSON.parse(response),
-                        ul = document.getElementById('posts'),
+                        ul = document.getElementById('post_wrap'),
                         len = content.length;
                     // Holder for new page.
                     var page = [];
@@ -80,11 +80,11 @@
                 }).then(function(response) {
                     var post = JSON.parse(response)[0];
                     if (post) {
-                        document.getElementById('post').innerHTML = '';
-                        document.getElementById('post').innerHTML += '<h1>' + post.title + '</h1>';
-                        document.getElementById('post').innerHTML += '<div class="post-text">' + post.text.substring(0) + '</div>';
+                        document.getElementById('post_wrap').innerHTML = '';
+                        document.getElementById('post_wrap').innerHTML += '<h1>' + post.title + '</h1>';
+                        document.getElementById('post_wrap').innerHTML += '<div class="post-text">' + post.text.substring(0) + '</div>';
                     } else {
-                        document.getElementById('post').innerHTML = '<i>The post you are looking for doesn\'t exist...</i>';
+                        document.getElementById('post_wrap').innerHTML = '<i>The post you are looking for doesn\'t exist...</i>';
                     }
                 });
             }

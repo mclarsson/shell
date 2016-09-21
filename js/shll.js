@@ -365,9 +365,12 @@
                 }
                 // fill out csrf tokens
                 var csrf_tokens = document.querySelectorAll('input[name$="csrf_token"]');
-                var csrf_meta = document.querySelector('meta[name$="csrf_token"]');
+                var csrf_meta = document.querySelector('meta[name$="csrf_token"]').content
+                                                                                        .replace('?', '%3f')
+                                                                                        .replace('&', '%26')
+                                                                                        .replace('+', '%2B');
                 for (var i = 0, len = csrf_tokens.length; i < len; i++) {
-                    csrf_tokens[i].value = csrf_meta.content;
+                    csrf_tokens[i].value = csrf_meta;
                 }
 
                 // Listen to async post forms
@@ -423,13 +426,13 @@
              * @param  {Object} params Object with parameters to be encoded.
              * @return {String}        Paramaters in string form.
              */
-            encodeParams: function(params) {
-                var n = Object.keys(params).length,
+            encodeParams: function(values) {
+                var n = Object.keys(values).length,
                     i = 1,
                     string = '?';
-                for (var param in params) {
-                    if (params.hasOwnProperty(param)) {
-                        string += param + '=' + params[param];
+                for (var param in values) {
+                    if (values.hasOwnProperty(param)) {
+                        string += param + '=' + values[param];
                         if (i < n) {
                             string += '&';
                         }

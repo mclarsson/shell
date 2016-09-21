@@ -11,9 +11,9 @@ function log(s) {
             activate: 'home',
             template: '/html/templates/home.html'
         }).route({
-            path: '/blogg/?page',
-            title: 'shll | blogg',
-            activate: 'blogg',
+            path: '/posts/?page',
+            title: 'shll | posts',
+            activate: 'posts',
             template: '/html/templates/posts.html',
             callback: function(params) {
                 postController.update(params.page);
@@ -23,7 +23,7 @@ function log(s) {
             }
         }).route({
             path: '/article/&title',
-            activate: 'blogg',
+            activate: 'posts',
             template: '/html/templates/article.html',
             callback: function(params) {
                 shll.title('shll | ' + params.title);
