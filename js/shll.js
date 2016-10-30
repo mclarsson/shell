@@ -286,7 +286,7 @@
                         }
                     }
                 }
-                
+
                 html.render(file, route.force, auth)
                     .then(function() {
                         if (typeof route.callback === 'function') {
@@ -366,9 +366,9 @@
                 // fill out csrf tokens
                 var csrf_tokens = document.querySelectorAll('input[name$="csrf_token"]');
                 var csrf_meta = document.querySelector('meta[name$="csrf_token"]').content
-                                                                                        .replace('?', '%3f')
-                                                                                        .replace('&', '%26')
-                                                                                        .replace('+', '%2B');
+                    .replace('?', '%3f')
+                    .replace('&', '%26')
+                    .replace('+', '%2B');
                 for (var i = 0, len = csrf_tokens.length; i < len; i++) {
                     csrf_tokens[i].value = csrf_meta;
                 }

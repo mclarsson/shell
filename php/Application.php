@@ -6,19 +6,6 @@
 class Application
 {
 
-    /**
-     * Calls function associated with route, returns base html otherwise
-     */
-    public static function route($uri)
-    {
-        $trimmed = substr($uri, strlen(DOC_ROOT));
-        if (array_key_exists($trimmed, self::$routes)) {
-            self::{self::$routes[$trimmed]}();
-        } else {
-            include BASE_HTML;
-        }
-    }
-
     ///////////
     // _API_ //
     ///////////
@@ -34,6 +21,19 @@ class Application
         '/auth/register' => 'register',
         '/auth/template' => 'auth_template'
     ];
+
+    /**
+     * Calls function associated with route, prints base html otherwise
+     */
+    public static function route($uri)
+    {
+        $trimmed = substr($uri, strlen(DOC_ROOT));
+        if (array_key_exists($trimmed, self::$routes)) {
+            self::{self::$routes[$trimmed]}();
+        } else {
+            include BASE_HTML;
+        }
+    }
 
     /**
      * Logs user in
