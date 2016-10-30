@@ -74,7 +74,7 @@
         <nav>
             <div class="nav_links">
                 <a id="home"  href="/">shll</a>
-                <a id="posts" href="/posts">Posts</a>
+                <a id="blogg" href="/blogg">Blogg</a>
                 <?php echo User::loggedIn() ? '<a id="admin" href="/admin">Admin</a>' : ''; ?> 
             </div>
         </nav>

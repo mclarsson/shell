@@ -2,18 +2,20 @@ function log(s) {
     console.log(s);
 }
 (function() {
+
     /////////////////
     // Application //
     /////////////////
+
     shll.route({
             path: '/',
             title: 'shll',
             activate: 'home',
             template: '/html/templates/home.html'
         }).route({
-            path: '/posts/?page',
-            title: 'shll | posts',
-            activate: 'posts',
+            path: '/blogg/?page',
+            title: 'shll | blogg',
+            activate: 'blogg',
             template: '/html/templates/posts.html',
             callback: function(params) {
                 postController.update(params.page);
@@ -23,7 +25,7 @@ function log(s) {
             }
         }).route({
             path: '/article/&title',
-            activate: 'posts',
+            activate: 'blogg',
             template: '/html/templates/article.html',
             callback: function(params) {
                 shll.title('shll | ' + params.title);
